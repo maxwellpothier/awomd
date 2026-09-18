@@ -169,6 +169,9 @@ Track as much as possible now; scale down later.
 
 ## Deferred (explicitly not now)
 
+- Favicon decision: A glyph is the placeholder. Options on the table are the
+  full wordmark everywhere, or a split (A glyph at 16/32px, wordmark at 180/512px).
+
 - Postal address in footer
 - Apple Music / Bandcamp resolvers, Odesli universal links
 - Keystatic or any editor UI
