@@ -33,7 +33,7 @@ First issue: Sunday 2026-09-20, 4pm. Quality over speed; ship when it's right.
 | App | Next.js, TypeScript | Site, preview, send command, webhooks |
 | Hosting | Vercel | Free tier. Portable if that changes. |
 | Database | Supabase Postgres | Subscribers, sends log, tracking events. Nothing else. |
-| Email relay | Resend (or Postmark/SES) | Delivery + open/click tracking + webhooks only |
+| Email relay | Resend — **decided 2026-09-19** | Delivery + open/click tracking + webhooks only. Postmark and SES were the alternatives; both rejected for the first issue because new accounts need manual approval (days). Resend delivers via its own MTA (`*.rmta.net`), *not* SES — so this is a bet on Resend specifically. Kept behind an adapter so it stays a config value. |
 | Email templates | React Email | Compiles blocks to table-based email HTML |
 | Domain | awomd.com, Namecheap BasicDNS | Send from a subdomain (e.g. send.awomd.com). From shows awomd.com. |
 | Replies | Namecheap email forwarding | max@awomd.com → personal inbox. MX on root, no collision with relay subdomain. |
@@ -51,9 +51,13 @@ Initial block palette (will grow; the abstraction is what's fixed):
   Can nest Tracks.
 - **Track** — title, artist, pills, listen link, one-line note. Standalone or
   nested under an AlbumCard.
-- **MediaCard** — same shape as AlbumCard for non-music (documentary, book,
-  show). Different resolver or hand-entered.
-- **Pills** — freeform strings on any card ("rage", "acoustic", "twangy").
+- **Pills** — freeform strings on any card or track ("rage", "acoustic",
+  "twangy"). A *property*, not a block; pills never stand on their own.
+
+There is **one card type, not two**: non-music entries (documentary, book, show)
+are the same shape as an album, so they are the same block with a different
+`kind`. The resolver record already carries `kind`; splitting them again is a
+file change if that ever stops holding.
 - **Divider**, **PullQuote**, **Image**, **PlaylistLink** as needed.
 
 Every block type has exactly two renderers: `web` and `email`. Adding a block
@@ -102,10 +106,22 @@ Direction read from the logo (blocky extruded orange letters on navy):
 
 Design happens in code, in the components gallery. No Figma step.
 
+Colour and type tokens live in `src/design/tokens.ts` as literal strings, because
+email HTML carries inline styles and cannot read CSS custom properties. Tailwind
+restates them in `globals.css`; `npm run tokens:check` fails if the two drift.
+
 Logo: needs the real file, plus a transparent-background PNG at 2x display size,
 hosted on our domain for the email header.
 
 ## Publishing
+
+**The send command does not render the email itself.** The app exposes the
+email render at `/issues/<slug>/email` (and `?text=1` for the plain-text
+alternative); `npm run send` fetches that and hands it to the relay. A route
+handler cannot share a path with a page, so this is a child route rather than
+the `?format=email` query param originally sketched. One compilation path, so the preview toggle is
+literally what gets sent rather than a parallel implementation that drifts.
+Decided 2026-09-19; the alternative was compiling MDX separately in the script.
 
 A command (not cron, not a button, for now):
 
@@ -135,6 +151,9 @@ npm run send -- --issue 2026-09-20 --to list    # sends to all confirmed subscri
 
 Track as much as possible now; scale down later.
 
+- Click and open tracking run through **`links.awomd.com`** (CNAME to
+  `links2.resend-dns.com`), so tracked links carry our domain rather than the
+  relay's — better looking, and a mismatched link domain is a spam signal.
 - Relay-provided open and click tracking, toggled on. We store the webhook
   events raw and never build the pixel or redirect ourselves.
 - Opens overcount (Apple Mail preloads). Treat opens as a floor, clicks as
@@ -160,12 +179,41 @@ Track as much as possible now; scale down later.
 4. Components gallery route. Establish the cream/navy/orange system there.
 5. Email renderers for every block. Preview toggle. Dark mode handling.
 6. Site pages: home, archive, permalink, about.
-7. DNS: relay domain verification on the send subdomain, email forwarding on
-   the root, point root/www at Vercel, delete Namecheap's default www redirect.
+7. ~~DNS~~ — **done 2026-09-19**, moved first in practice because it was the
+   only step with lead time we don't control. Resend verified on `awomd.com`
+   (DKIM + the `rsend`/`send` CNAMEs), DMARC `p=none` on the root, tracking
+   subdomain `links.awomd.com`, email forwarding intact on the root MX. Note
+   Resend's "Enable Receiving" stays **off** — turning it on would put MX on the
+   root and break reply forwarding. Still outstanding: point root/www at Vercel,
+   which needs the Vercel project to exist first.
 8. Supabase schema. Subscribe form, confirm, unsubscribe, List-Unsubscribe.
 9. Send command with self-send and idempotent list send.
 10. Relay webhooks → events table.
 11. Write the first issue. Self-send. Test on phone in light and dark. Send.
+
+## Standing in for deferred pieces
+
+Built for the first issue under the 2026-09-20 descope. Each is a deliberate
+stand-in with the same guarantee as the real thing, not a shortcut:
+
+- **Recipients** are a gitignored `content/recipients.txt`, not a database.
+  Real addresses never enter version control.
+- **Idempotency** is a `.sends/<issue>.jsonl` ledger instead of the `sends`
+  table. Same property: nobody gets an issue twice, and a half-failed run
+  resumes on re-run.
+- **Unsubscribe** is `mailto:`-based, because per-recipient tokens need the
+  subscribers table. Gmail and Apple Mail still show a one-click button; they
+  send mail instead of POSTing. Swap to a tokenised HTTPS URL plus
+  `List-Unsubscribe-Post` when Supabase lands.
+- **Cards are hand-entered** (artist, title, year, cover) rather than resolved.
+  `ResolvedRecord` already has the shape the resolver will fill, so the change
+  is how a card is populated, not how it renders.
+
+## Gotcha
+
+Turbopack's build cache can miss an edit to an MDX file — the build succeeds and
+serves the previous compilation. If a change to an issue does not appear, `rm -rf
+.next` and rebuild. Cost an hour once; worth the line.
 
 ## Deferred (explicitly not now)
 
