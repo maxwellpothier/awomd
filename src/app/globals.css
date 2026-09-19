@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
-/* Brand tokens. Sampled from the logo: navy ground, hot orange stroke.
-   Cream is the page. Navy frames it (header, footer) and is the text color. */
+/* Brand tokens. Cream is the page; navy frames it (header, footer) and is the
+   text color. Source of truth is src/design/tokens.ts — email renderers need
+   these as literal strings, since email HTML cannot use custom properties.
+   Restated here for Tailwind; `npm run tokens:check` fails if they drift. */
 :root {
   --cream: #fdfbf0;
   --cream-deep: #f3efdc;
