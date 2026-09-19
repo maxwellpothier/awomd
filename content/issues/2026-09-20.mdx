@@ -1,0 +1,104 @@
+{/*
+  PLACEHOLDER — issue 001.
+
+  Everything below is filler that exercises one of each block, so the web and
+  email renderers can be checked end to end before there is real writing. Replace
+  the prose, swap the cards for real records, and update the title and preview in
+  `src/content/issues.ts`. Nothing here is precious.
+
+  Blocks available: Section, Album, Media, Track, PullQuote, Divider.
+  Markdown works everywhere — paragraphs, **bold**, [links](https://example.com),
+  and lists all render in both mediums.
+*/}
+
+A week of placeholder listening. This paragraph is the intro: it sits above the
+first section and sets up whatever the week turned out to be about.
+
+<Section title="On Repeat">
+
+<Album
+  artist="Placeholder Artist"
+  title="A Record With A Long Enough Name To Wrap"
+  year={2026}
+  cover="/covers/placeholder-01.png"
+  href="https://open.spotify.com/album/placeholder-01"
+  pills={["rage", "twangy", "loud"]}
+>
+Prose beneath a card. This is where the actual thinking goes — what the record
+does, why it stuck, what it sounds like when the room is quiet.
+
+A second paragraph, because one is rarely enough.
+</Album>
+
+<Album
+  artist="Another Placeholder"
+  title="Shorter Title"
+  year={2019}
+  cover="/covers/placeholder-02.png"
+  href="https://open.spotify.com/album/placeholder-02"
+  pills={["acoustic", "slow"]}
+>
+A card can nest tracks when only part of the record is the point.
+
+<Track
+  title="The One Good Song"
+  artist="Another Placeholder"
+  href="https://open.spotify.com/track/placeholder-a"
+  pills={["quiet"]}
+  note="One line about why this track and not the others."
+/>
+</Album>
+
+</Section>
+
+<Section title="Single Tracks">
+
+<Track
+  title="A Standalone Track"
+  artist="Third Placeholder"
+  href="https://open.spotify.com/track/placeholder-b"
+  pills={["twangy"]}
+  note="Tracks work outside a card too, for the ones that arrived alone."
+/>
+
+<Track
+  title="Another Standalone"
+  artist="Fourth Placeholder"
+  note="A track with no link and no pills, to prove the sparse case renders."
+/>
+
+</Section>
+
+<PullQuote
+  text="A pull quote, for when a line is worth stopping on."
+  cite="Someone worth quoting"
+/>
+
+<Section title="Not Music">
+
+<Media
+  kind="documentary"
+  artist="A Director"
+  title="Something Watched This Week"
+  year={2024}
+  pills={["long", "worth it"]}
+>
+Non-music entries use the same card with a different `kind`. Documentaries,
+books, shows — same shape, same renderers, no second component.
+</Media>
+
+<Media
+  kind="book"
+  artist="An Author"
+  title="Something Read This Week"
+  year={1978}
+>
+A card with no cover, to prove that path renders cleanly in both mediums.
+</Media>
+
+</Section>
+
+<Divider />
+
+A closing paragraph. Replies are the feedback mechanism, so this is where the
+ask goes: what should be on the desk next week?

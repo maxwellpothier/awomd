@@ -1,7 +1,11 @@
+import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Issues are imported as modules, not routed as pages, so `pageExtensions`
+  // stays at its default — an .mdx file never becomes a route by accident.
 };
 
-export default nextConfig;
+const withMDX = createMDX({});
+
+export default withMDX(nextConfig);
