@@ -1,0 +1,6 @@
+# One email address per line. Blank lines and # comments are ignored.
+# Copy this to content/recipients.txt — that file is gitignored, because
+# other people's email addresses do not belong in version control.
+
+someone@example.com
+someone-else@example.com
