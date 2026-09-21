@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { site, subscribeMessage } from "@/content/site";
+import { site } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "About",
@@ -28,7 +28,7 @@ export default function AboutPage() {
         </p>
         <p>
           <Link
-            href={subscribeMessage.path}
+            href="/"
             className="font-display text-sm uppercase tracking-[0.18em] text-orange-deep underline decoration-orange/40 underline-offset-4 hover:text-orange"
           >
             Subscribe

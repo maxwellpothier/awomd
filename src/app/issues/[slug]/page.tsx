@@ -39,5 +39,5 @@ export default async function IssuePage({
   const { slug } = await params;
   const meta = findIssue(slug);
   if (!meta) notFound();
-  return <Inbox open={{ kind: "issue", meta }} view="message" />;
+  return <Inbox open={meta} view="message" />;
 }

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { subscribeMessage } from "@/content/site";
 import logo from "../../../public/brand/logo.png";
 
 const nav = [
@@ -39,7 +38,7 @@ export function Header() {
             ))}
             <li>
               <Link
-                href={subscribeMessage.path}
+                href="/"
                 className="block rounded-sm bg-orange px-3 py-1.5 text-navy transition-colors hover:bg-cream"
               >
                 Subscribe
