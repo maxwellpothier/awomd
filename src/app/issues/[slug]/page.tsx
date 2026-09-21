@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { IssueArticle } from "@/components/site/IssueArticle";
+import { Inbox } from "@/components/site/Inbox";
 import { findIssue, issues } from "@/content/issues";
 
 export function generateStaticParams() {
@@ -30,6 +30,7 @@ export async function generateMetadata({
   };
 }
 
+/** The permalink, and the "read in browser" target: the inbox with this issue open. */
 export default async function IssuePage({
   params,
 }: {
@@ -38,5 +39,5 @@ export default async function IssuePage({
   const { slug } = await params;
   const meta = findIssue(slug);
   if (!meta) notFound();
-  return <IssueArticle meta={meta} />;
+  return <Inbox selected={meta} view="message" />;
 }

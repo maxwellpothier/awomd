@@ -20,9 +20,11 @@ import {
 } from "@/content/blocks";
 
 /**
- * Email renderers for every block.
+ * The renderers for every block.
  *
- * Same blocks as `web.tsx`, different medium. Three rules hold throughout:
+ * There is no web counterpart: the site renders these inline (see
+ * `site/Letter.tsx`), so what the page shows is what the inbox gets. Three
+ * rules hold throughout:
  * every style is inline (Outlook ignores custom properties, Gmail strips
  * stylesheets), every layout is a table (no flexbox), and every image is an
  * absolute URL with explicit dimensions.

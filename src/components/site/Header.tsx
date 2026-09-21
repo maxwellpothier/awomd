@@ -1,28 +1,32 @@
 import Image from "next/image";
 import Link from "next/link";
+import { subscribeHref } from "@/content/site";
 import logo from "../../../public/brand/logo.png";
 
 const nav = [
-  { href: "/", label: "Latest" },
-  { href: "/issues", label: "Archive" },
+  { href: "/issues", label: "Inbox" },
   { href: "/about", label: "About" },
 ] as const;
 
+/**
+ * The app bar. Slim, because the letter in the reading pane carries the big
+ * banner itself — a second one above it would be the logo twice.
+ */
 export function Header() {
   return (
     <header className="bg-navy text-cream">
-      <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-6 pb-7 pt-10 sm:pt-12">
+      <div className="mx-auto flex h-16 items-center justify-between gap-6 px-5">
         <Link href="/" aria-label="A Week on My Desk, home" className="block">
           <Image
             src={logo}
             alt="A Week on My Desk"
             priority
-            sizes="(max-width: 640px) 280px, 420px"
-            className="h-auto w-[280px] sm:w-[420px]"
+            sizes="160px"
+            className="h-9 w-auto"
           />
         </Link>
         <nav aria-label="Primary">
-          <ul className="flex items-center gap-6 font-display text-sm uppercase tracking-[0.2em]">
+          <ul className="flex items-center gap-5 font-display text-[12px] uppercase tracking-[0.2em]">
             {nav.map((item) => (
               <li key={item.href}>
                 <Link
@@ -33,6 +37,14 @@ export function Header() {
                 </Link>
               </li>
             ))}
+            <li>
+              <a
+                href={subscribeHref}
+                className="block rounded-sm bg-orange px-3 py-1.5 text-navy transition-colors hover:bg-cream"
+              >
+                Subscribe
+              </a>
+            </li>
           </ul>
         </nav>
       </div>

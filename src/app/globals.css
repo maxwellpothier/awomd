@@ -13,6 +13,10 @@
   --orange-deep: #ac2b0e;
   --ink: var(--navy);
   --ink-muted: #4a5163;
+
+  /* App bar height: h-16 plus the 4px orange rule. The inbox layout sizes
+     its scrolling columns against this. */
+  --header-h: 68px;
 }
 
 @theme inline {
@@ -36,4 +40,27 @@ body {
   background: var(--cream);
   color: var(--ink);
   font-family: var(--font-serif), Georgia, "Times New Roman", serif;
+}
+
+/* The letter: the email render, shown inline in the reading pane.
+
+   Email HTML names its fonts as literal stacks ("Anton, Arial Narrow, ...")
+   because a mail client can only use what is installed. On the site those
+   same names should resolve to the webfonts next/font loaded, which register
+   under generated family names — so map by stack, with !important because
+   the stacks arrive as inline styles. This is the one place the site is
+   allowed to differ from the inbox: type, nothing else. */
+.letter [style*="Anton"] {
+  font-family: var(--font-display), Anton, "Arial Narrow", Impact, sans-serif !important;
+}
+.letter [style*="Source Serif"] {
+  font-family: var(--font-serif), Georgia, "Times New Roman", serif !important;
+}
+
+/* Tailwind's preflight strips list markers; mail clients don't. */
+.letter ul {
+  list-style: disc;
+}
+.letter ol {
+  list-style: decimal;
 }

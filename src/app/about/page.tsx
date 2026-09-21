@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { site, subscribeHref } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "About",
@@ -21,8 +22,23 @@ export default function AboutPage() {
           notes on why each one stuck.
         </p>
         <p>
-          It goes out Sundays at 4pm. Replies are the point: the whole reason
-          this exists is to get recommendations back.
+          It goes out Sundays at {site.sendTime}. Replies are the point: the
+          whole reason this exists is to get recommendations back.
+        </p>
+        <p>
+          <a
+            href={subscribeHref}
+            className="font-display text-sm uppercase tracking-[0.18em] text-orange-deep underline decoration-orange/40 underline-offset-4 hover:text-orange"
+          >
+            Subscribe
+          </a>
+          <span className="text-ink-muted"> · or just write to </span>
+          <a
+            href={`mailto:${site.replyAddress}`}
+            className="underline decoration-orange/40 underline-offset-4 hover:text-orange"
+          >
+            {site.replyAddress}
+          </a>
         </p>
       </div>
     </div>

@@ -1,13 +1,13 @@
 import type { MDXComponents } from "mdx/types";
-import { webComponents } from "@/components/blocks/web";
+import { createEmailComponents } from "@/components/blocks/email";
 
 /**
  * The default component map for MDX compiled anywhere in the app.
  *
- * Issues override this per-render by passing `components` explicitly — that is
- * what lets one issue file produce both the web and the email document. Web is
- * the default because it is what `next dev` shows.
+ * Issues always pass `components` explicitly, stamped with their slug, so
+ * this fallback only applies to MDX rendered outside an issue. It is the same
+ * renderer either way: there is only one.
  */
 export function useMDXComponents(): MDXComponents {
-  return webComponents;
+  return createEmailComponents({ issue: "", baseUrl: "" });
 }

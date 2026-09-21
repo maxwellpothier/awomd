@@ -1,7 +1,7 @@
-import { IssueArticle } from "@/components/site/IssueArticle";
+import { Inbox } from "@/components/site/Inbox";
 import { latestIssue } from "@/content/issues";
 
-/** The home page is the latest issue, in full. */
+/** Home is the latest issue, open. On a phone that means the message itself. */
 export default function Home() {
-  return <IssueArticle meta={latestIssue} />;
+  return <Inbox selected={latestIssue} view={latestIssue ? "message" : "list"} />;
 }

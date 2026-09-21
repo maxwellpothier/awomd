@@ -20,19 +20,14 @@ export interface IssueMeta {
   preview: string;
 }
 
-/** Newest first. */
-export const issues: IssueMeta[] = [
-  {
-    slug: "2026-09-20",
-    number: "001",
-    title: "Placeholder",
-    date: "2026-09-20",
-    preview:
-      "Placeholder copy for the first issue — replace before sending.",
-  },
-];
+/**
+ * Newest first. Empty until the first issue goes out — the inbox shows its
+ * empty state, and an issue is registered on the branch that ships it.
+ */
+export const issues: IssueMeta[] = [];
 
-export const latestIssue = issues[0];
+/** Undefined until the first issue is registered — the inbox shows its empty state. */
+export const latestIssue: IssueMeta | undefined = issues.at(0);
 
 export function findIssue(slug: string): IssueMeta | undefined {
   return issues.find((issue) => issue.slug === slug);

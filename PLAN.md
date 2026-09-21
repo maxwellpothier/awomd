@@ -20,8 +20,9 @@ First issue: Sunday 2026-09-20, 4pm. Quality over speed; ship when it's right.
 
 - **Own the content and the list. Rent delivery.** Issues live in git. Subscribers
   live in a database we control. The email relay is a config value.
-- **The email constraint is the design constraint.** Every block renders to both
-  web and email. Nothing gets authored that email can't show.
+- **The email constraint is the design constraint.** Every block renders as
+  email, and the website shows that same render. Nothing gets authored that
+  email can't show.
 - **Don't build admin UIs until the file workflow hurts.**
 - **Every platform dependency sits behind a resolver or adapter** so swapping it
   is a file change, not a migration.
@@ -60,8 +61,11 @@ are the same shape as an album, so they are the same block with a different
 file change if that ever stops holding.
 - **Divider**, **PullQuote**, **Image**, **PlaylistLink** as needed.
 
-Every block type has exactly two renderers: `web` and `email`. Adding a block
-type is adding a file.
+Every block type has exactly one renderer, the email one, and the site
+renders it inline. Adding a block type is adding a component to that one file.
+**Decided 2026-09-21**; until then there was a second, richer web renderer,
+dropped because the site is now an inbox and the point of the reading pane is
+to show what was actually sent.
 
 ### Resolvers
 
@@ -81,10 +85,10 @@ picks a resolver by URL, which returns a canonical record:
 
 1. Write the issue as an MDX file in the editor. Notes drafted anywhere
    (Apple Notes exports Markdown) get pasted in.
-2. `next dev` shows a live preview at the issue URL with a toggle between the
-   web render and the email render.
-3. A dev-only **components gallery** route renders every block in both forms
-   with sample data. This is the design surface and the email regression check.
+2. `next dev` shows the issue at its URL, in the reading pane, exactly as it
+   will land in the inbox. The raw email document is at `/issues/<slug>/email`.
+3. A dev-only **components gallery** route renders every block with sample
+   data. This is the design surface and the email regression check.
 4. Later, if typing tags gets annoying: Keystatic (git-backed block editor,
    writes the same files). Not before.
 
@@ -93,8 +97,10 @@ picks a resolver by URL, which returns a canonical record:
 Direction read from the logo (blocky extruded orange letters on navy):
 
 - **Cream page background** (sample exact value from the reference file).
-- **Navy banner** top and bottom, logo in the header, unsubscribe/reply in the
-  footer.
+- **Navy app bar** on the site, slim, logo left and Subscribe right. The
+  letter itself carries the big navy banner at its top and the navy footer
+  with reply and unsubscribe at its bottom, so the site has no footer of its
+  own — two navy footers stacked was the alternative.
 - **Navy body text**, not black.
 - **Orange is scarce**: pills, links, section-title accents.
 - **Heavy condensed display face** for section titles; readable serif or plain
@@ -105,6 +111,17 @@ Direction read from the logo (blocky extruded orange letters on navy):
   Apple Mail and Gmail in dark mode before the first send.
 
 Design happens in code, in the components gallery. No Figma step.
+
+**The website is an inbox — decided 2026-09-21.** One layout for every public
+page: a list of issues as message rows (sender, subject, preview line, date)
+beside a reading pane showing the selected issue. The pane shows the actual
+email render inline, not a web re-layout, so loading the homepage is the
+preview. Wide screens show both halves scrolling independently; a phone shows
+the list or the open message. Not a Gmail imitation: it uses the cream, navy,
+and orange system and none of anyone else's chrome. The one permitted
+difference from the inbox is type: the letter's named font stacks are mapped
+to the loaded webfonts in `globals.css`, because a mail client only has system
+fonts and the site does not have to pretend otherwise.
 
 Colour and type tokens live in `src/design/tokens.ts` as literal strings, because
 email HTML carries inline styles and cannot read CSS custom properties. Tailwind
@@ -119,8 +136,8 @@ hosted on our domain for the email header.
 email render at `/issues/<slug>/email` (and `?text=1` for the plain-text
 alternative); `npm run send` fetches that and hands it to the relay. A route
 handler cannot share a path with a page, so this is a child route rather than
-the `?format=email` query param originally sketched. One compilation path, so the preview toggle is
-literally what gets sent rather than a parallel implementation that drifts.
+the `?format=email` query param originally sketched. One compilation path, so what
+the site shows is literally what gets sent rather than a parallel implementation that drifts.
 Decided 2026-09-19; the alternative was compiling MDX separately in the script.
 
 A command (not cron, not a button, for now):
@@ -163,9 +180,13 @@ Track as much as possible now; scale down later.
 
 ## Website
 
-- `/` — the latest issue, full render, subscribe form.
-- `/issues` — archive list.
+All three are the inbox layout with a different message open:
+
+- `/` — the latest issue open. On a phone, the message itself.
+- `/issues` — the inbox. On a phone, the list; on a wide screen the latest
+  issue is open beside it, since an empty pane helps nobody.
 - `/issues/[slug]` — permalink, also the "read in browser" target.
+- Subscribe is a `mailto:` button in the app bar until the form exists.
 - `/about`
 - `/subscribe/confirm`, `/unsubscribe` — token endpoints.
 - `/dev/components` — gallery, dev only.
@@ -174,10 +195,10 @@ Track as much as possible now; scale down later.
 
 1. Repo: Next.js + TypeScript + Tailwind, Supabase client, React Email. Commit.
 2. Issue file format and the block types: Prose, AlbumCard, Track, MediaCard,
-   Pills. Web renderers first.
+   Pills.
 3. Spotify resolver + JSON cache + cover mirroring.
 4. Components gallery route. Establish the cream/navy/orange system there.
-5. Email renderers for every block. Preview toggle. Dark mode handling.
+5. Email renderers for every block. Dark mode handling.
 6. Site pages: home, archive, permalink, about.
 7. ~~DNS~~ — **done 2026-09-19**, moved first in practice because it was the
    only step with lead time we don't control. Resend verified on `awomd.com`
@@ -205,6 +226,9 @@ stand-in with the same guarantee as the real thing, not a shortcut:
   subscribers table. Gmail and Apple Mail still show a one-click button; they
   send mail instead of POSTing. Swap to a tokenised HTTPS URL plus
   `List-Unsubscribe-Post` when Supabase lands.
+- **Subscribe** is a `mailto:` button in the app bar, for the same reason:
+  no subscribers table means no form to post to yet. Requests arrive as email
+  and go on the recipients file by hand.
 - **Cards are hand-entered** (artist, title, year, cover) rather than resolved.
   `ResolvedRecord` already has the shape the resolver will fill, so the change
   is how a card is populated, not how it renders.

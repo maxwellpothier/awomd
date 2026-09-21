@@ -1,9 +1,10 @@
 /**
  * The block vocabulary an issue is written in.
  *
- * Every block here has exactly two renderers — `components/blocks/web` and
- * `components/blocks/email`. An issue file names blocks but never a platform
- * or a layout, which is what lets one file produce both documents.
+ * Every block here has one renderer, `components/blocks/email`. The site
+ * shows that same render inline in its reading pane, so an issue file names
+ * blocks but never a platform or a layout, and the email constraint is the
+ * only constraint.
  */
 import type { ReactNode } from "react";
 
