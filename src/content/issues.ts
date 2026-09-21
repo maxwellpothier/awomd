@@ -20,11 +20,17 @@ export interface IssueMeta {
   preview: string;
 }
 
-/**
- * Newest first. Empty until the first issue goes out — the inbox shows its
- * empty state, and an issue is registered on the branch that ships it.
- */
-export const issues: IssueMeta[] = [];
+/** Newest first. */
+export const issues: IssueMeta[] = [
+  {
+    slug: "2026-09-20",
+    number: "001",
+    title: "The Gen Z Kids Are Alright",
+    date: "2026-09-20",
+    preview:
+      "Two years ago I'd have told you Gen Z was in a music drought. Now it's most of what excites me. Lucy Bedroque, Mary in the Junkyard, and a few tracks.",
+  },
+];
 
 /** Undefined until the first issue is registered — the inbox shows its empty state. */
 export const latestIssue: IssueMeta | undefined = issues.at(0);
