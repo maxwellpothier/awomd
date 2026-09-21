@@ -2,39 +2,31 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Letter } from "@/components/site/Letter";
 import {
-  SubscribeLetter,
-  type SubscribeState,
-} from "@/components/site/SubscribeLetter";
-import {
   issueDateLabel,
   issues,
   latestIssue,
   type IssueMeta,
 } from "@/content/issues";
-import { site, subscribeMessage } from "@/content/site";
+import { site } from "@/content/site";
 
 /**
- * What the reading pane shows: an issue, or the pinned subscribe message.
- * Undefined leaves the pane empty.
- */
-export type Open =
-  | { kind: "issue"; meta: IssueMeta }
-  | { kind: "subscribe"; state: SubscribeState };
-
-/**
- * The site is an inbox.
+ * The inbox.
  *
- * Every public page is this one layout: a list of messages, and a reading
- * pane showing the open one. The first row is always the subscribe message,
- * so the inbox is never empty and `/subscribe` is a message like any other.
- * Below it, issues, newest first, each rendered exactly as it was emailed.
- *
- * On a wide screen both halves are visible and scroll independently, like a
- * mail client. On a phone the page is either the list or the open message,
- * which is what `view` decides.
+ * Issues as message rows, newest first, beside a reading pane showing the
+ * open one exactly as it was emailed. On a wide screen both halves are
+ * visible and scroll independently, like a mail client. On a phone the page
+ * is either the list or the open message, which is what `view` decides.
+ * Before the first send, both halves say the inbox is empty.
  */
-export function Inbox({ open, view }: { open?: Open; view: "list" | "message" }) {
-  const count = issues.length + 1;
+export function Inbox({
+  open,
+  view,
+}: {
+  /** The open issue. Undefined leaves the pane empty. */
+  open?: IssueMeta;
+  view: "list" | "message";
+}) {
+  const count = issues.length;
   return (
     <div className="lg:flex lg:h-[calc(100dvh-var(--header-h))]">
       <aside
@@ -48,23 +40,20 @@ export function Inbox({ open, view }: { open?: Open; view: "list" | "message" })
             Inbox
           </h1>
           <span className="font-display text-[11px] uppercase tracking-[0.18em] text-ink-muted">
-            {count} {count === 1 ? "message" : "messages"}
+            {count} {count === 1 ? "issue" : "issues"}
           </span>
         </div>
+        {issues.length === 0 ? (
+          <p className="border-t border-cream-deep px-5 py-10 text-center font-display text-[11px] uppercase tracking-[0.22em] text-ink-muted">
+            No items in inbox
+          </p>
+        ) : null}
         <ol className="border-t border-cream-deep">
-          <Row
-            href={subscribeMessage.path}
-            selected={open?.kind === "subscribe"}
-            corner={<Pinned />}
-            subject={subscribeMessage.subject}
-            preview={subscribeMessage.preview}
-            tag="Subscribe"
-          />
           {issues.map((issue) => (
             <Row
               key={issue.slug}
               href={`/issues/${issue.slug}`}
-              selected={open?.kind === "issue" && open.meta.slug === issue.slug}
+              selected={open?.slug === issue.slug}
               corner={
                 <time
                   dateTime={issue.date}
@@ -88,9 +77,7 @@ export function Inbox({ open, view }: { open?: Open; view: "list" | "message" })
           view === "list" ? "hidden lg:block" : "block"
         } min-w-0 flex-1 bg-cream-deep lg:overflow-y-auto`}
       >
-        {open?.kind === "issue" ? <IssueMessage meta={open.meta} /> : null}
-        {open?.kind === "subscribe" ? <SubscribeMessage state={open.state} /> : null}
-        {!open ? <EmptyPane /> : null}
+        {open ? <IssueMessage meta={open} /> : <EmptyPane />}
       </section>
     </div>
   );
@@ -107,13 +94,13 @@ function Row({
 }: {
   href: string;
   selected: boolean;
-  /** Top-right of the row: a date for issues, a pin for the subscribe message. */
+  /** Top-right of the row: the date. */
   corner: ReactNode;
   /** Orange dot before the subject, marking the latest issue. */
   dot?: boolean;
   subject: string;
   preview: string;
-  /** Bottom label: "Issue 001" or "Subscribe". */
+  /** Bottom label: "Issue 001". */
   tag: string;
 }) {
   return (
@@ -150,21 +137,6 @@ function Row({
         </p>
       </Link>
     </li>
-  );
-}
-
-function Pinned() {
-  return (
-    <span className="flex flex-none items-center gap-1 font-display text-[11px] uppercase tracking-[0.18em] text-orange-deep">
-      <svg
-        aria-hidden
-        viewBox="0 0 16 16"
-        className="h-3 w-3 fill-current"
-      >
-        <path d="M9.5 1.5 14.5 6.5l-2.2.4-2.6 2.6.4 3.5-1.4 1.4L6 11.7 2.5 15.2l-1.7-1.7L4.3 10 1.6 7.3 3 5.9l3.5.4 2.6-2.6z" />
-      </svg>
-      Pinned
-    </span>
   );
 }
 
@@ -233,27 +205,32 @@ function IssueMessage({ meta }: { meta: IssueMeta }) {
   );
 }
 
-function SubscribeMessage({ state }: { state: SubscribeState }) {
-  return (
-    <article className="mx-auto max-w-[600px] px-4 pb-16 pt-6 sm:px-6 lg:pt-10">
-      <MessageHeader
-        subject={subscribeMessage.subject}
-        dateLine="whenever you get to it"
-        replySubject="Subscribe"
-      />
-      <SubscribeLetter state={state} />
-    </article>
-  );
-}
-
+/**
+ * Two empty states. Before the first send there is nothing to select, and
+ * the pane says so and when that changes. After it, an empty pane only means
+ * nothing is open yet.
+ */
 function EmptyPane() {
+  const empty = issues.length === 0;
   return (
     <div className="flex h-full min-h-[50vh] items-center justify-center px-6 text-center">
       <div>
         <p className="font-display text-2xl uppercase leading-none tracking-[0.04em] text-ink-muted">
-          Nothing open
+          {empty ? "No items in inbox" : "Nothing open"}
         </p>
-        <p className="mt-3 text-sm text-ink-muted">Select a message to read it.</p>
+        <p className="mt-3 text-sm text-ink-muted">
+          {empty
+            ? `The first issue lands on a Sunday at ${site.sendTime}.`
+            : "Select an issue to read it."}
+        </p>
+        {empty ? (
+          <Link
+            href="/"
+            className="mt-6 inline-block rounded-sm bg-orange px-5 py-2.5 font-display text-[12px] uppercase tracking-[0.18em] text-navy transition-colors hover:bg-navy hover:text-cream"
+          >
+            Subscribe
+          </Link>
+        ) : null}
       </div>
     </div>
   );

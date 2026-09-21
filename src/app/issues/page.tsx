@@ -9,17 +9,8 @@ export const metadata: Metadata = {
 
 /**
  * The inbox. On a phone this is the list; on a wide screen the latest issue
- * is open beside it, or the subscribe message until there is one.
+ * is open beside it. Until the first issue goes out, both halves say so.
  */
 export default function InboxPage() {
-  return (
-    <Inbox
-      open={
-        latestIssue
-          ? { kind: "issue", meta: latestIssue }
-          : { kind: "subscribe", state: "form" }
-      }
-      view="list"
-    />
-  );
+  return <Inbox open={latestIssue} view="list" />;
 }

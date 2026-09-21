@@ -180,27 +180,24 @@ Track as much as possible now; scale down later.
 
 ## Website
 
-Every public page is the inbox layout with a different message open:
-
-- `/` — the **subscribe message** open. Most visitors were handed the link,
-  so the form is the first thing they see; readers reach issues by permalink.
-  Flip to the latest issue when recruiting is done (one line in `page.tsx`).
-- `/subscribe` — the same, and the link to hand around. `?sent=1` and
-  `?confirmed=1` show the later steps of double opt-in.
+- `/` — the **signup page**: eyebrow, headline, one paragraph, the email
+  field, and nothing competing with it. This is the link to hand around.
+  `?sent=1` and `?confirmed=1` show the later steps of double opt-in.
 - `/issues` — the inbox. On a phone, the list; on a wide screen the latest
-  issue is open beside it, or the subscribe message until there is one.
+  issue is open beside it. Empty until the first issue goes out, and says so,
+  with a Subscribe button back to `/`.
 - `/issues/[slug]` — permalink, also the "read in browser" target.
-
-**The subscribe page is a message pinned to the top of the inbox — decided
-2026-09-21.** Sender, subject ("You're not subscribed yet"), preview line,
-"Pinned" where an issue shows its date. Opening it shows the pitch and the
-email field dressed as a letter: same banner, cream column, navy footer. The
-alternative was a separate landing page, rejected because it meant a second
-look for the site to maintain and the inbox is the identity. A side effect:
-the inbox is never empty, so there is no "no items" state.
 - `/about`
-- `/subscribe/confirm`, `/unsubscribe` — token endpoints.
+- `/subscribe/confirm`, `/unsubscribe` — token endpoints, with step 8.
 - `/dev/components` — gallery, dev only.
+
+**Signup is its own page, not part of the inbox — decided 2026-09-21.** For
+about an hour the signup was a message pinned to the top of the inbox, open by
+default on `/`. Reversed the same day: Max wanted to start handing the link
+out and an inbox is an unfamiliar first screen for someone who doesn't know
+what this is, with the field below a banner and a pitch on a laptop. The
+signup page puts the field in the first screen everywhere. The inbox keeps its
+identity at `/issues`.
 
 ## Build order for the first issue
 
