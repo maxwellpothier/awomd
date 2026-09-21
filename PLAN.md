@@ -180,13 +180,24 @@ Track as much as possible now; scale down later.
 
 ## Website
 
-All three are the inbox layout with a different message open:
+Every public page is the inbox layout with a different message open:
 
-- `/` — the latest issue open. On a phone, the message itself.
+- `/` — the **subscribe message** open. Most visitors were handed the link,
+  so the form is the first thing they see; readers reach issues by permalink.
+  Flip to the latest issue when recruiting is done (one line in `page.tsx`).
+- `/subscribe` — the same, and the link to hand around. `?sent=1` and
+  `?confirmed=1` show the later steps of double opt-in.
 - `/issues` — the inbox. On a phone, the list; on a wide screen the latest
-  issue is open beside it, since an empty pane helps nobody.
+  issue is open beside it, or the subscribe message until there is one.
 - `/issues/[slug]` — permalink, also the "read in browser" target.
-- Subscribe is a `mailto:` button in the app bar until the form exists.
+
+**The subscribe page is a message pinned to the top of the inbox — decided
+2026-09-21.** Sender, subject ("You're not subscribed yet"), preview line,
+"Pinned" where an issue shows its date. Opening it shows the pitch and the
+email field dressed as a letter: same banner, cream column, navy footer. The
+alternative was a separate landing page, rejected because it meant a second
+look for the site to maintain and the inbox is the identity. A side effect:
+the inbox is never empty, so there is no "no items" state.
 - `/about`
 - `/subscribe/confirm`, `/unsubscribe` — token endpoints.
 - `/dev/components` — gallery, dev only.
@@ -226,9 +237,11 @@ stand-in with the same guarantee as the real thing, not a shortcut:
   subscribers table. Gmail and Apple Mail still show a one-click button; they
   send mail instead of POSTing. Swap to a tokenised HTTPS URL plus
   `List-Unsubscribe-Post` when Supabase lands.
-- **Subscribe** is a `mailto:` button in the app bar, for the same reason:
-  no subscribers table means no form to post to yet. Requests arrive as email
-  and go on the recipients file by hand.
+- **The subscribe form is UI only.** It posts to `/api/subscribe`, which
+  does not exist yet; the route handler, the subscribers table, the
+  confirmation email, and the confirm endpoint are step 8. Until then the
+  page's "just write to me" mailto is the working path, and **the button
+  404s** — wire it before handing the link around.
 - **Cards are hand-entered** (artist, title, year, cover) rather than resolved.
   `ResolvedRecord` already has the shape the resolver will fill, so the change
   is how a card is populated, not how it renders.
@@ -250,5 +263,14 @@ serves the previous compilation. If a change to an issue does not appear, `rm -r
 - Feedback form (replies are the feedback mechanism)
 - Tag pages
 - Scheduled/automatic sends
+- **Send from CI on merge** — raised 2026-09-21, parked. Merging an issue
+  branch to `main` should deploy it, not send it: email is irreversible, a
+  merge is low-ceremony, the ledger is a local file that a fresh runner
+  would not have, and CI would race the Vercel deploy for the covers. The
+  shape to revisit once the `sends` table exists: a manually triggered
+  GitHub Actions workflow that takes an issue slug, self-sends, then pauses
+  on an environment approval gate for the phone check before the list
+  send. A Sunday 4pm scheduled job that sends whatever is registered and
+  unsent is a small addition on top of that.
 - Analytics dashboard (queries on `events` suffice)
 - Custom domain for the components gallery or any auth
