@@ -11,8 +11,23 @@ export const site = {
   sendTime: "4:00 PM",
 } as const;
 
-/** Until there is a subscribers table, subscribing is an email too. */
-export const subscribeHref = `mailto:${site.replyAddress}?subject=Subscribe`;
+/**
+ * The subscribe page is a message pinned to the top of the inbox, so it has
+ * a subject and a preview line like an issue does. `/subscribe` is its
+ * permalink — the link to hand around.
+ */
+export const subscribeMessage = {
+  path: "/subscribe",
+  subject: "You're not subscribed yet",
+  preview:
+    "One email, Sundays at 4pm, about the music that crossed my desk. Leave your address and I'll add you.",
+} as const;
+
+/**
+ * Where the form posts. Not wired up yet: the route handler, the subscribers
+ * table, and the confirmation email are build-order step 8 in PLAN.md.
+ */
+export const subscribeAction = "/api/subscribe";
 
 /**
  * Mailto unsubscribe, the same stand-in the send command uses until
