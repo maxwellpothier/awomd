@@ -216,6 +216,12 @@ identity at `/issues`.
    root and break reply forwarding. Still outstanding: point root/www at Vercel,
    which needs the Vercel project to exist first.
 8. Supabase schema. Subscribe form, confirm, unsubscribe, List-Unsubscribe.
+   **Schema done 2026-09-23**: `subscribers`, `sends`, `events` are live, RLS
+   on with no policies, `anon`/`authenticated` granted nothing. With
+   "Automatically expose new tables" off, `service_role` gets no table
+   privileges either — bypassing RLS is not the same as being granted access —
+   so a third migration grants it read/write explicitly. Any new table needs
+   the same grant. No app code uses Supabase yet.
 9. Send command with self-send and idempotent list send.
 10. Relay webhooks → events table.
 11. Write the first issue. Self-send. Test on phone in light and dark. Send.
@@ -231,9 +237,12 @@ stand-in with the same guarantee as the real thing, not a shortcut:
   table. Same property: nobody gets an issue twice, and a half-failed run
   resumes on re-run.
 - **Unsubscribe** is `mailto:`-based, because per-recipient tokens need the
-  subscribers table. Gmail and Apple Mail still show a one-click button; they
-  send mail instead of POSTing. Swap to a tokenised HTTPS URL plus
-  `List-Unsubscribe-Post` when Supabase lands.
+  subscribers table wired into the send. Gmail and Apple Mail still show a
+  one-click button; they send mail instead of POSTing. The footer link goes to
+  `/unsubscribe`, one URL for everyone, which says to email Max rather than
+  pretending to act. Swap both to a tokenised HTTPS URL plus
+  `List-Unsubscribe-Post` when the send reads from Supabase; the footer URL
+  only gains `?token=`.
 - **The subscribe form is UI only.** It posts to `/api/subscribe`, which
   does not exist yet; the route handler, the subscribers table, the
   confirmation email, and the confirm endpoint are step 8. Until then the

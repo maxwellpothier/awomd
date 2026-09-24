@@ -1,0 +1,14 @@
+-- Move citext out of `public`.
+--
+-- The previous migration's `create extension citext` named no schema, so it
+-- landed in `public` — where an extension's functions and operators join the
+-- exposed API surface and can collide with our own names. Supabase keeps
+-- extensions in `extensions` for that reason, and pgcrypto was already there,
+-- which is why that `create extension pgcrypto` was a silent no-op.
+--
+-- Safe to move after the fact: `subscribers.email` keeps its type by OID and
+-- the unique index keeps its operator class, and `extensions` is already on the
+-- database search_path, so an unqualified `citext` and its `=` still resolve.
+-- Verified after applying: 'Max@Example.COM' still matches 'max@example.com',
+-- and inserting 'MAX@example.com' still raises unique_violation.
+alter extension citext set schema extensions;
