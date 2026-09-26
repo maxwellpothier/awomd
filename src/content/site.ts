@@ -11,11 +11,7 @@ export const site = {
   sendTime: "4:00 PM",
 } as const;
 
-/**
- * Where the signup form posts. Not wired up yet: the route handler, the
- * subscribers table, and the confirmation email are build-order step 8 in
- * PLAN.md.
- */
+/** Where the signup form posts. Double opt-in starts there. */
 export const subscribeAction = "/api/subscribe";
 
 /**

@@ -3,15 +3,14 @@ import type { ReactNode } from "react";
 import { site, subscribeAction } from "@/content/site";
 
 /** Which step of double opt-in the visitor is on. Driven by the query string. */
-export type SignupState = "form" | "sent" | "confirmed";
+export type SignupState = "form" | "sent" | "confirmed" | "error";
 
 /**
  * The homepage: a signup form and nothing competing with it.
  *
  * This is the link that gets handed around, so the field is in the first
- * screen on a phone and a laptop alike. The form is unwired — see
- * `subscribeAction` — and the three states are here so wiring it later is a
- * route handler, not a redesign.
+ * screen on a phone and a laptop alike. The form posts to `subscribeAction`,
+ * and it and the confirm link redirect back here with the step to show.
  */
 export function Signup({ state }: { state: SignupState }) {
   return (
@@ -19,6 +18,7 @@ export function Signup({ state }: { state: SignupState }) {
       {state === "form" ? <Form /> : null}
       {state === "sent" ? <Sent /> : null}
       {state === "confirmed" ? <Confirmed /> : null}
+      {state === "error" ? <Failed /> : null}
 
       <p className="mt-14 flex flex-wrap gap-x-5 gap-y-2 font-display text-[11px] uppercase tracking-[0.2em] text-ink-muted">
         <Link href="/issues" className="hover:text-orange">
@@ -123,6 +123,34 @@ function Confirmed() {
       <p className="mt-7 max-w-md text-lg leading-8">
         The next issue lands on Sunday at {site.sendTime}. Until then, the
         inbox has everything that&rsquo;s gone out so far.
+      </p>
+    </>
+  );
+}
+
+function Failed() {
+  return (
+    <>
+      <Eyebrow>Something went wrong</Eyebrow>
+      <Headline>That didn&rsquo;t work</Headline>
+      <div className="mt-5 h-0.5 w-16 bg-orange" aria-hidden />
+      <p className="mt-7 max-w-md text-lg leading-8">
+        Either the confirmation email couldn&rsquo;t be sent or that link has
+        stopped working.{" "}
+        <Link
+          href="/"
+          className="underline decoration-orange/40 underline-offset-4 hover:text-orange"
+        >
+          Try again
+        </Link>
+        , or{" "}
+        <a
+          href={`mailto:${site.replyAddress}?subject=Subscribe`}
+          className="underline decoration-orange/40 underline-offset-4 hover:text-orange"
+        >
+          just write to me
+        </a>{" "}
+        and I&rsquo;ll add you by hand.
       </p>
     </>
   );

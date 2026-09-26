@@ -221,7 +221,10 @@ identity at `/issues`.
    "Automatically expose new tables" off, `service_role` gets no table
    privileges either — bypassing RLS is not the same as being granted access —
    so a third migration grants it read/write explicitly. Any new table needs
-   the same grant. No app code uses Supabase yet.
+   the same grant. **Subscribe and confirm done 2026-09-23**: `/api/subscribe`
+   records a pending row and emails a confirm link; `/subscribe/confirm`
+   moves pending to confirmed. Still to do: tokenised unsubscribe, and the send
+   reading from `subscribers` instead of `recipients.txt`.
 9. Send command with self-send and idempotent list send.
 10. Relay webhooks → events table.
 11. Write the first issue. Self-send. Test on phone in light and dark. Send.
@@ -243,11 +246,12 @@ stand-in with the same guarantee as the real thing, not a shortcut:
   pretending to act. Swap both to a tokenised HTTPS URL plus
   `List-Unsubscribe-Post` when the send reads from Supabase; the footer URL
   only gains `?token=`.
-- **The subscribe form is UI only.** It posts to `/api/subscribe`, which
-  does not exist yet; the route handler, the subscribers table, the
-  confirmation email, and the confirm endpoint are step 8. Until then the
-  page's "just write to me" mailto is the working path, and **the button
-  404s** — wire it before handing the link around.
+- **Confirmed subscribers don't receive issues yet.** The form fills
+  `subscribers`, but the send still reads `recipients.txt`, so a new
+  confirmed reader has to be added there by hand until the send moves over.
+- **Nothing rate-limits confirmation emails.** Anyone can make the form mail
+  any address repeatedly. Fine at friends-and-family scale; add a
+  `confirm_sent_at` throttle if it's ever abused.
 - **Cards are hand-entered** (artist, title, year, cover) rather than resolved.
   `ResolvedRecord` already has the shape the resolver will fill, so the change
   is how a card is populated, not how it renders.

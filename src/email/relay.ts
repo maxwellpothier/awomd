@@ -15,9 +15,10 @@ export interface Outgoing {
   text: string;
   /**
    * How this recipient stops receiving mail. Gmail and Apple Mail surface it
-   * as a one-click button above the message.
+   * as a one-click button above the message. Every issue carries one; a
+   * confirmation email does not, because its recipient isn't on the list yet.
    */
-  unsubscribe: { mailto?: string; url?: string };
+  unsubscribe?: { mailto?: string; url?: string };
 }
 
 export interface SendResult {
@@ -31,6 +32,7 @@ export interface Relay {
 }
 
 function unsubscribeHeaders(unsubscribe: Outgoing["unsubscribe"]) {
+  if (!unsubscribe) return {};
   const parts = [
     unsubscribe.url ? `<${unsubscribe.url}>` : null,
     unsubscribe.mailto ? `<mailto:${unsubscribe.mailto}>` : null,
