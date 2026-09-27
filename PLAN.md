@@ -103,14 +103,33 @@ Direction read from the logo (blocky extruded orange letters on navy):
   own — two navy footers stacked was the alternative.
 - **Navy body text**, not black.
 - **Orange is scarce**: pills, links, section-title accents.
-- **Heavy condensed display face** for section titles; readable serif or plain
-  sans for prose. Must look intentional when it degrades to system fonts.
+- **Installed fonts only, site and email alike** (chosen by Max 2026-09-26):
+  Avenir Next Condensed Heavy for headlines, Georgia for everything else.
+  Gmail and Outlook ignore webfonts, so a loaded face would only ever reach
+  Apple Mail readers. Each stack falls back to something close; who sees what
+  is in `docs/email-safe-fonts.md`. A custom face could come back later only as
+  images of the headlines.
 - **Cover art carries the color.** Everything else stays restrained.
 - **Texture** only on the site header and logo, never in email components.
+- **Torn paper** (2026-09-26): the homepage masthead and the email banner end
+  in the same tear (`src/design/tear.ts`). The site clips to it; email can't
+  clip, so it is baked into `public/brand/email-banner.png` over transparency
+  (`npm run banner`), which replaced the orange rule under the banner.
 - **Dark mode handled explicitly**: `color-scheme` meta, tested on iPhone
   Apple Mail and Gmail in dark mode before the first send.
 
 Design happens in code, in the components gallery. No Figma step.
+
+**Site chrome pass — 2026-09-26.** The first version read as generated: a
+tracked-caps eyebrow, a caps headline, an orange bar and a paragraph on every
+page, orange on every control, copy full of em dashes and slogans. Now: the
+display face appears once per page, as the H1; everything else, nav and
+buttons included, is in sentence case, set in Georgia (see type,
+above); no eyebrows or accent bars;
+primary buttons are navy, and orange is left to the header's Subscribe and the
+logo. No orange rule under the bar. Copy is first person and plain, in the voice
+of the issues. The homepage shows the top of the latest issue beside the form.
+The letter's own blocks were not part of this pass.
 
 **The website is an inbox — decided 2026-09-21.** One layout for every public
 page: a list of issues as message rows (sender, subject, preview line, date)
@@ -118,10 +137,9 @@ beside a reading pane showing the selected issue. The pane shows the actual
 email render inline, not a web re-layout, so loading the homepage is the
 preview. Wide screens show both halves scrolling independently; a phone shows
 the list or the open message. Not a Gmail imitation: it uses the cream, navy,
-and orange system and none of anyone else's chrome. The one permitted
-difference from the inbox is type: the letter's named font stacks are mapped
-to the loaded webfonts in `globals.css`, because a mail client only has system
-fonts and the site does not have to pretend otherwise.
+and orange system and none of anyone else's chrome. Since the fonts are
+installed ones, the site draws the letter exactly as the inbox does, type
+included.
 
 Colour and type tokens live in `src/design/tokens.ts` as literal strings, because
 email HTML carries inline styles and cannot read CSS custom properties. Tailwind
@@ -160,6 +178,9 @@ npm run send -- --issue 2026-09-20 --to list    # sends to all confirmed subscri
 
 - **Double opt-in.** Form → confirmation email → confirm link → subscribed.
 - Subscribe form ships with the site; the first send can go to a hand-made list.
+- Each confirm emails Max at the reply address ("New subscriber: …", with the
+  running count). On confirm rather than signup, so typos and no-shows stay
+  quiet. Added 2026-09-27.
 - Tables: `subscribers` (email, status, tokens, timestamps), `sends`
   (subscriber, issue, sent_at, relay message id), `events` (subscriber, issue,
   type, link, timestamp — raw relay webhook events).
@@ -216,6 +237,15 @@ identity at `/issues`.
    root and break reply forwarding. Still outstanding: point root/www at Vercel,
    which needs the Vercel project to exist first.
 8. Supabase schema. Subscribe form, confirm, unsubscribe, List-Unsubscribe.
+   **Schema done 2026-09-23**: `subscribers`, `sends`, `events` are live, RLS
+   on with no policies, `anon`/`authenticated` granted nothing. With
+   "Automatically expose new tables" off, `service_role` gets no table
+   privileges either — bypassing RLS is not the same as being granted access —
+   so a third migration grants it read/write explicitly. Any new table needs
+   the same grant. **Subscribe and confirm done 2026-09-23**: `/api/subscribe`
+   records a pending row and emails a confirm link; `/subscribe/confirm`
+   moves pending to confirmed. Still to do: tokenised unsubscribe, and the send
+   reading from `subscribers` instead of `recipients.txt`.
 9. Send command with self-send and idempotent list send.
 10. Relay webhooks → events table.
 11. Write the first issue. Self-send. Test on phone in light and dark. Send.
@@ -231,14 +261,18 @@ stand-in with the same guarantee as the real thing, not a shortcut:
   table. Same property: nobody gets an issue twice, and a half-failed run
   resumes on re-run.
 - **Unsubscribe** is `mailto:`-based, because per-recipient tokens need the
-  subscribers table. Gmail and Apple Mail still show a one-click button; they
-  send mail instead of POSTing. Swap to a tokenised HTTPS URL plus
-  `List-Unsubscribe-Post` when Supabase lands.
-- **The subscribe form is UI only.** It posts to `/api/subscribe`, which
-  does not exist yet; the route handler, the subscribers table, the
-  confirmation email, and the confirm endpoint are step 8. Until then the
-  page's "just write to me" mailto is the working path, and **the button
-  404s** — wire it before handing the link around.
+  subscribers table wired into the send. Gmail and Apple Mail still show a
+  one-click button; they send mail instead of POSTing. The footer link goes to
+  `/unsubscribe`, one URL for everyone, which says to email Max rather than
+  pretending to act. Swap both to a tokenised HTTPS URL plus
+  `List-Unsubscribe-Post` when the send reads from Supabase; the footer URL
+  only gains `?token=`.
+- **Confirmed subscribers don't receive issues yet.** The form fills
+  `subscribers`, but the send still reads `recipients.txt`, so a new
+  confirmed reader has to be added there by hand until the send moves over.
+- **Nothing rate-limits confirmation emails.** Anyone can make the form mail
+  any address repeatedly. Fine at friends-and-family scale; add a
+  `confirm_sent_at` throttle if it's ever abused.
 - **Cards are hand-entered** (artist, title, year, cover) rather than resolved.
   `ResolvedRecord` already has the shape the resolver will fill, so the change
   is how a card is populated, not how it renders.

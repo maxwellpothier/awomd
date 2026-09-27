@@ -8,8 +8,8 @@ export interface RenderIssueOptions {
   /** Absolute origin. Images and links in email cannot be relative. */
   baseUrl: string;
   /**
-   * Per-recipient unsubscribe link. The send command passes a real tokenised
-   * URL; previews pass a placeholder.
+   * Where the footer's unsubscribe link points. One URL for everyone today;
+   * per-recipient tokens need the subscribers table.
    */
   unsubscribeUrl: string;
 }

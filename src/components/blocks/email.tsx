@@ -8,7 +8,7 @@ import {
   Text,
 } from "@react-email/components";
 import type { MDXComponents } from "mdx/types";
-import { color, font } from "@/design/tokens";
+import { color, displayWeight, font } from "@/design/tokens";
 import {
   kindLabel,
   listenUrl,
@@ -51,12 +51,12 @@ const prose = {
   color: color.ink,
 } as const;
 
+/** Small metadata lines: kind and year, pills, Listen, citations. */
 const label = {
   margin: "0",
-  fontFamily: font.display,
-  fontSize: "11px",
-  letterSpacing: "1.6px",
-  textTransform: "uppercase",
+  fontFamily: font.serif,
+  fontSize: "13px",
+  lineHeight: "18px",
   color: color.inkMuted,
 } as const;
 
@@ -84,7 +84,6 @@ export function createEmailComponents(at: {
           ...label,
           margin: "6px 0 0",
           color: color.orangeDeep,
-          letterSpacing: "1.4px",
         }}
       >
         {pills.join("  ·  ")}
@@ -99,10 +98,9 @@ export function createEmailComponents(at: {
           style={{
             margin: "0",
             fontFamily: font.display,
+            fontWeight: displayWeight,
             fontSize: "24px",
-            lineHeight: "28px",
-            letterSpacing: "1px",
-            textTransform: "uppercase",
+            lineHeight: "30px",
             color: color.ink,
           }}
         >
@@ -155,9 +153,9 @@ export function createEmailComponents(at: {
               style={{
                 margin: "4px 0 0",
                 fontFamily: font.display,
+                fontWeight: displayWeight,
                 fontSize: "19px",
-                lineHeight: "23px",
-                textTransform: "uppercase",
+                lineHeight: "24px",
                 color: color.ink,
               }}
             >
@@ -209,9 +207,9 @@ export function createEmailComponents(at: {
           style={{
             margin: "0",
             fontFamily: font.display,
+            fontWeight: displayWeight,
             fontSize: "16px",
-            lineHeight: "20px",
-            textTransform: "uppercase",
+            lineHeight: "21px",
             color: color.ink,
           }}
         >
@@ -255,9 +253,9 @@ export function createEmailComponents(at: {
           style={{
             margin: "0",
             fontFamily: font.display,
+            fontWeight: displayWeight,
             fontSize: "18px",
             lineHeight: "24px",
-            textTransform: "uppercase",
             color: color.ink,
           }}
         >

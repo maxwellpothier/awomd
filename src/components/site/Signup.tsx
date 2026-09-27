@@ -1,129 +1,204 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { site, subscribeAction } from "@/content/site";
+import { issueDateLabel, type IssueMeta } from "@/content/issues";
+import { site } from "@/content/site";
+import { SignupForm } from "./SignupForm";
 
 /** Which step of double opt-in the visitor is on. Driven by the query string. */
-export type SignupState = "form" | "sent" | "confirmed";
+export type SignupState = "form" | "sent" | "confirmed" | "error";
 
 /**
- * The homepage: a signup form and nothing competing with it.
+ * The homepage: the signup form, and beside it the latest issue's title and
+ * preview, so a visitor sees what they're signing up for. The logo is the
+ * header's alone on this page (see Header).
  *
  * This is the link that gets handed around, so the field is in the first
- * screen on a phone and a laptop alike. The form is unwired — see
- * `subscribeAction` — and the three states are here so wiring it later is a
- * route handler, not a redesign.
+ * screen on a phone and a laptop alike; the preview sits below it on a phone.
+ * The form posts to `subscribeAction`, and it and the confirm link redirect
+ * back here with the step to show.
  */
-export function Signup({ state }: { state: SignupState }) {
+export function Signup({
+  state,
+  email,
+  latest,
+}: {
+  state: SignupState;
+  /** The address just submitted, when known. Shown on "check your email". */
+  email?: string;
+  latest?: IssueMeta;
+}) {
   return (
-    <div className="mx-auto flex min-h-[calc(100dvh-var(--header-h))] max-w-xl flex-col justify-center px-6 py-16 sm:py-20">
-      {state === "form" ? <Form /> : null}
-      {state === "sent" ? <Sent /> : null}
-      {state === "confirmed" ? <Confirmed /> : null}
-
-      <p className="mt-14 flex flex-wrap gap-x-5 gap-y-2 font-display text-[11px] uppercase tracking-[0.2em] text-ink-muted">
-        <Link href="/issues" className="hover:text-orange">
-          Read past issues →
-        </Link>
-        <Link href="/about" className="hover:text-orange">
-          About
-        </Link>
-      </p>
+    <div className="mx-auto grid max-w-6xl gap-12 px-6 py-8 sm:px-8 sm:py-14 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-center lg:gap-20 lg:py-20">
+      <div className="max-w-xl">
+        {state === "form" ? <Form /> : null}
+        {state === "sent" ? <Sent email={email} /> : null}
+        {state === "confirmed" ? <Confirmed latest={latest} /> : null}
+        {state === "error" ? <Failed /> : null}
+      </div>
+      <LatestIssue latest={latest} />
     </div>
   );
 }
 
-function Eyebrow({ children }: { children: ReactNode }) {
+/**
+ * The homepage headline, highlighted (`.highlight` in globals.css). The
+ * highlight sits on an inner span, not the h1, so it follows each wrapped
+ * line instead of filling the block.
+ */
+function Headline({ children }: { children: ReactNode }) {
   return (
-    <p className="font-display text-[11px] uppercase tracking-[0.22em] text-orange-deep">
+    <h1 className="text-balance font-display text-[44px] leading-[1.08] sm:text-[64px]">
+      <span className="highlight">{children}</span>
+    </h1>
+  );
+}
+
+function Lede({ children }: { children: ReactNode }) {
+  return (
+    <p className="mt-5 text-pretty text-lg leading-[1.6] sm:mt-6 sm:text-[19px] sm:leading-[1.65]">
       {children}
     </p>
   );
 }
 
-function Headline({ children }: { children: ReactNode }) {
+function Note({ children }: { children: ReactNode }) {
+  return <p className="mt-4 text-base leading-7 text-ink-muted">{children}</p>;
+}
+
+const textLink =
+  "underline decoration-ink/30 underline-offset-[3px] transition-colors hover:text-orange-deep hover:decoration-orange-deep";
+
+function MailMe({ subject }: { subject: string }) {
   return (
-    <h1 className="mt-4 font-display text-5xl uppercase leading-[0.92] tracking-[0.01em] sm:text-6xl">
-      {children}
-    </h1>
+    <a
+      href={`mailto:${site.replyAddress}?subject=${encodeURIComponent(subject)}`}
+      className={textLink}
+    >
+      {site.replyAddress}
+    </a>
   );
 }
 
 function Form() {
   return (
     <>
-      <Eyebrow>Sundays · {site.sendTime}</Eyebrow>
-      <Headline>A weekly letter about the music on my desk</Headline>
-      <div className="mt-5 h-0.5 w-16 bg-orange" aria-hidden />
-      <p className="mt-7 max-w-md text-lg leading-8">
-        Albums, tracks, and the occasional documentary or book, with notes on
-        why each one stuck. One email a week. Replies are the point.
-      </p>
+      <Headline>Music worth passing along</Headline>
+      <Lede>
+        More people should share the music that moves them, so here&rsquo;s
+        mine. Every Sunday evening I send out the albums and songs that stayed
+        on my desk all week. Some of it will be strange, but that&rsquo;s the
+        point.
+      </Lede>
 
-      <form
-        action={subscribeAction}
-        method="post"
-        className="mt-9 flex flex-col gap-3 sm:flex-row"
-      >
-        <label className="sr-only" htmlFor="signup-email">
-          Email address
-        </label>
-        <input
-          id="signup-email"
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          inputMode="email"
-          placeholder="you@example.com"
-          className="min-w-0 flex-1 rounded-sm border border-navy/25 bg-cream px-4 py-3.5 text-base text-ink placeholder:text-ink-muted/70 focus:border-orange focus:outline-none focus:ring-2 focus:ring-orange/30"
-        />
-        <button
-          type="submit"
-          className="rounded-sm bg-orange px-6 py-3.5 font-display text-sm uppercase tracking-[0.18em] text-navy transition-colors hover:bg-navy hover:text-cream"
-        >
-          Subscribe
-        </button>
-      </form>
-      <p className="mt-3 text-sm text-ink-muted">
-        You&rsquo;ll get one email asking you to confirm. Nothing arrives until
-        you click it, and unsubscribe is one click at the bottom of every issue.
-      </p>
+      <SignupForm />
     </>
   );
 }
 
-function Sent() {
+function Sent({ email }: { email?: string }) {
   return (
     <>
-      <Eyebrow>One more step</Eyebrow>
-      <Headline>Check your inbox</Headline>
-      <div className="mt-5 h-0.5 w-16 bg-orange" aria-hidden />
-      <p className="mt-7 max-w-md text-lg leading-8">
-        A confirmation email is on its way. Click the link in it and
-        you&rsquo;re on the list. If it doesn&rsquo;t show up in a few minutes,
-        check spam, then{" "}
-        <a
-          href={`mailto:${site.replyAddress}?subject=Subscribe`}
-          className="underline decoration-orange/40 underline-offset-4 hover:text-orange"
-        >
-          just write to me
-        </a>
-        .
-      </p>
+      <Headline>Check your email</Headline>
+      {/* The address gets a line of its own so it never breaks mid-word
+          across two. One too long for a line breaks after the @ if it can. */}
+      <Lede>
+        {email ? (
+          <>
+            I just sent a confirmation link to
+            <strong className="block font-semibold [overflow-wrap:anywhere]">
+              {email.split("@")[0]}@<wbr />
+              {email.split("@").slice(1).join("@")}
+            </strong>
+          </>
+        ) : (
+          "I just sent a confirmation link. "
+        )}
+        Click it and you&rsquo;re on the list.
+      </Lede>
+      <Note>
+        Nothing after a few minutes? Check your spam folder, or email me at{" "}
+        <MailMe subject="Subscribe" />.
+        {email ? (
+          <>
+            {" "}
+            Wrong address?{" "}
+            <Link href="/" className={textLink}>
+              Try again
+            </Link>
+            .
+          </>
+        ) : null}
+      </Note>
     </>
   );
 }
 
-function Confirmed() {
+function Confirmed({ latest }: { latest?: IssueMeta }) {
   return (
     <>
-      <Eyebrow>Done</Eyebrow>
-      <Headline>You&rsquo;re in</Headline>
-      <div className="mt-5 h-0.5 w-16 bg-orange" aria-hidden />
-      <p className="mt-7 max-w-md text-lg leading-8">
-        The next issue lands on Sunday at {site.sendTime}. Until then, the
-        inbox has everything that&rsquo;s gone out so far.
-      </p>
+      <Headline>You&rsquo;re on the list</Headline>
+      <Lede>
+        The next issue goes out Sunday evening.
+        {latest ? (
+          <>
+            {" "}
+            If you can&rsquo;t wait,{" "}
+            <Link href={`/issues/${latest.slug}`} className={textLink}>
+              the latest one is here
+            </Link>
+            .
+          </>
+        ) : null}
+      </Lede>
     </>
+  );
+}
+
+function Failed() {
+  return (
+    <>
+      <Headline>Something went wrong</Headline>
+      <Lede>
+        Either the confirmation email didn&rsquo;t send or that link has
+        expired.{" "}
+        <Link href="/" className={textLink}>
+          Try again
+        </Link>
+        , or email me at <MailMe subject="Subscribe" /> and I&rsquo;ll add you
+        myself.
+      </Lede>
+    </>
+  );
+}
+
+/**
+ * The latest issue as a card: issue line, title, preview. Nothing before the
+ * first send.
+ */
+function LatestIssue({ latest }: { latest?: IssueMeta }) {
+  if (!latest) return null;
+
+  return (
+    <aside aria-label="Latest issue" className="w-full max-w-[400px]">
+      <Link href={`/issues/${latest.slug}`} className="group block">
+        <div className="overflow-hidden bg-cream shadow-[0_1px_3px_rgba(15,19,30,0.10),0_12px_32px_-12px_rgba(15,19,30,0.25)]">
+          <div className="h-1 bg-orange" aria-hidden />
+          <div className="px-6 pb-7 pt-6">
+            <p className="text-sm text-ink-muted">
+              Issue {latest.number} · {issueDateLabel(latest.date)}
+            </p>
+            <p className="mt-2 font-display text-[28px] leading-[1.15]">
+              {latest.title}
+            </p>
+            <p className="mt-3 line-clamp-3 text-[15px] leading-6 text-ink-muted">
+              {latest.preview}
+            </p>
+            <p className="mt-4 text-[15px] font-medium text-orange-deep group-hover:underline">
+              Read this issue
+            </p>
+          </div>
+        </div>
+      </Link>
+    </aside>
   );
 }

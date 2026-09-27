@@ -14,9 +14,16 @@
   --ink: var(--navy);
   --ink-muted: #4a5163;
 
-  /* App bar height: h-16 plus the 4px orange rule. The inbox layout sizes
-     its scrolling columns against this. */
-  --header-h: 68px;
+  /* Type. Installed fonts only, so the site and the inbox draw the same
+     letters; see the note on `font` in tokens.ts. */
+  --type-display: "Avenir Next Condensed", "Arial Narrow",
+    "sans-serif-condensed", Arial, sans-serif;
+  --type-display-weight: 800;
+  --type-serif: Georgia, "Times New Roman", serif;
+
+  /* App bar height (h-16). The inbox layout sizes its scrolling columns
+     against this. */
+  --header-h: 64px;
 }
 
 @theme inline {
@@ -28,33 +35,161 @@
   --color-orange-deep: var(--orange-deep);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
-  --font-display: var(--font-display);
-  --font-serif: var(--font-serif);
+  --font-display: var(--type-display);
+  --font-serif: var(--type-serif);
 }
 
 html {
   color-scheme: light;
+  background: var(--navy);
 }
 
+/* Navy, because Safari 26 tints its status bar from the body's background and
+   ignores theme-color; every page opens on navy, so the bar runs into it. It
+   also covers the rubber-band scroll past the top. The cream is painted by
+   the page wrapper in the root layout. */
 body {
-  background: var(--cream);
+  background: var(--navy);
   color: var(--ink);
-  font-family: var(--font-serif), Georgia, "Times New Roman", serif;
+  font-family: var(--type-serif);
 }
 
-/* The letter: the email render, shown inline in the reading pane.
-
-   Email HTML names its fonts as literal stacks ("Anton, Arial Narrow, ...")
-   because a mail client can only use what is installed. On the site those
-   same names should resolve to the webfonts next/font loaded, which register
-   under generated family names — so map by stack, with !important because
-   the stacks arrive as inline styles. This is the one place the site is
-   allowed to differ from the inbox: type, nothing else. */
-.letter [style*="Anton"] {
-  font-family: var(--font-display), Anton, "Arial Narrow", Impact, sans-serif !important;
+/* The one headline face only looks right at its heavy cut. */
+.font-display {
+  font-weight: var(--type-display-weight);
 }
-.letter [style*="Source Serif"] {
-  font-family: var(--font-serif), Georgia, "Times New Roman", serif !important;
+
+/* The homepage masthead: a sheet of navy paper torn along a slant that
+   rises from left to right, laid on the cream page (the tear is built in
+   Header.tsx). Half the slant goes under the logo as padding, so the logo
+   stays centered in the navy above the tear. */
+.masthead {
+  --slant: clamp(24px, 5vw, 72px);
+  filter: drop-shadow(0 2px 3px rgb(15 19 30 / 0.28));
+}
+
+/* A highlighter swipe behind the lower part of each line of a headline,
+   CSS only, so it is drawn right from the first paint.
+
+   The stroke is one long band with a few gentle bends (the SVG), repeated
+   across. A background on wrapped inline text is painted as if its lines were
+   laid end to end, so each line shows a different stretch of the band and
+   leans its own way, like strokes of a real highlighter. Sized in em, so the
+   lean is the same at every font size.
+
+   The fill is the butter chosen by Max 2026-09-26 (#fbe38e); a data URI
+   can't read CSS variables, so the color lives in the SVG. */
+.highlight {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'%3E%3Cpath fill='%23fbe38e' d='M0 55 L420 49 L800 59 L1200 55 L1200 89 L820 87 L400 85 L0 89 Z'/%3E%3C/svg%3E");
+  background-size: 24em 100%;
+  background-repeat: repeat-x;
+  /* Lets the band run a touch past the first and last letters. */
+  padding: 0 0.06em;
+  margin: 0 -0.06em;
+}
+
+/* The signup field's send button (SignupForm). The arrow nudges forward on
+   hover; once the form is sent it stays where it is and spins until the next
+   page loads. */
+.send-arrow {
+  width: 22px;
+  height: 22px;
+  margin: auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: translate 220ms cubic-bezier(0.3, 0, 0.2, 1);
+}
+.send-button:hover .send-arrow {
+  translate: 2px 0;
+}
+.send-button[data-pending] .send-arrow {
+  translate: 0 0;
+  animation: send-spin 800ms linear infinite;
+}
+@keyframes send-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* The signup field (SignupForm): a cream face on a messy stack of three
+   plates, orange on navy on butter, shoved under it at odd angles. As the
+   address is typed the stack tidies up, and a complete-looking address
+   squares it off. --mess runs from 1 (empty) to 0 (squared); SignupForm sets
+   it on the form, and the transition (with a little overshoot, so the plates
+   settle past square and back) plays out here. Site-only: none of this is in
+   the email. */
+@property --mess {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+.signup-form {
+  /* The same angle swings the ends of a wider field further, so wide screens
+     get about half the tilt to look as messy as a phone. */
+  --tilt: 1;
+  transition: --mess 420ms cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+@media (min-width: 640px) {
+  .signup-form {
+    --tilt: 0.45;
+  }
+}
+.signup-input {
+  border: 2px solid var(--navy);
+  background: #fffefa;
+}
+/* Focused, the outline thickens: the stack no longer moves on focus, so this
+   is what shows where the keyboard is. */
+.signup-input:focus {
+  box-shadow: inset 0 0 0 1px var(--navy);
+}
+/* The plates. The field has only two pseudo-elements, so the navy one hangs
+   off the field's wrapper; z-index sorts all three inside the isolated
+   stack. */
+.signup-stack {
+  isolation: isolate;
+}
+.signup-stack::before,
+.signup-stack::after,
+.signup-field::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--navy);
+  border-radius: 14px;
+}
+.signup-stack::before {
+  z-index: -1;
+  background: var(--orange);
+  rotate: calc(2.2deg * var(--mess) * var(--tilt));
+  translate: calc(6px + 4px * var(--mess)) calc(6px + 1px * var(--mess));
+}
+.signup-field::before {
+  z-index: -2;
+  background: var(--navy);
+  rotate: calc(-1.3deg * var(--mess) * var(--tilt));
+  translate: calc(12px + 2px * var(--mess)) calc(12px + 3px * var(--mess));
+}
+.signup-stack::after {
+  z-index: -3;
+  background: #fbe38e;
+  rotate: calc(-2.8deg * var(--mess) * var(--tilt));
+  translate: calc(18px - 22px * var(--mess)) calc(18px - 2px * var(--mess));
+}
+
+/* The letter: the email render, shown inline in the reading pane. Its inline
+   font stacks are installed fonts, so the site draws them exactly as the
+   inbox does and needs no mapping here. */
+
+/* Tailwind's preflight collapses table borders, and a collapsed table ignores
+   its own padding — which is where React Email's <Section> puts it. Mail
+   clients use the separate model, so the letter's gutters only vanish here. */
+.letter table {
+  border-collapse: separate;
 }
 
 /* Tailwind's preflight strips list markers; mail clients don't. */

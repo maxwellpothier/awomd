@@ -10,7 +10,7 @@ import {
   Text,
 } from "@react-email/components";
 import type { ReactNode } from "react";
-import { color, font } from "@/design/tokens";
+import { color, displayWeight, font } from "@/design/tokens";
 
 export interface IssueLetterProps {
   title: string;
@@ -47,7 +47,7 @@ export function IssueLetter({
   unsubscribeUrl,
   children,
 }: IssueLetterProps) {
-  const logo = `${baseUrl.replace(/\/$/, "")}/brand/email-logo.jpg`;
+  const logo = `${baseUrl.replace(/\/$/, "")}/brand/email-banner.png`;
 
   return (
     <Container
@@ -60,16 +60,21 @@ export function IssueLetter({
     >
       {/*
         The banner is the image, full bleed — not a logo sitting on a navy
-        cell. The navy and its texture are baked into the JPEG, so there is
-        no seam to match, and a client that force-inverts backgrounds in
-        dark mode cannot strand the wordmark on the wrong ground.
+        cell. The navy and its texture are baked in, so there is no seam to
+        match, and a client that force-inverts backgrounds in dark mode cannot
+        strand the wordmark on the wrong ground.
+
+        Its bottom edge is torn, the same tear as the site's masthead, baked
+        in because email can't clip to a shape (scripts/tear-banner.mts,
+        `npm run banner`). Below the tear the PNG is transparent, so the
+        letter's own background shows through, cream or darkened.
       */}
       <Section style={{ padding: 0 }}>
         <Img
           src={logo}
           alt="A Week on My Desk"
           width="600"
-          height="306"
+          height="338"
           style={{
             display: "block",
             width: "100%",
@@ -79,18 +84,14 @@ export function IssueLetter({
           }}
         />
       </Section>
-      <Section
-        style={{ backgroundColor: color.orange, height: "4px", lineHeight: "4px" }}
-      />
 
       <Section style={{ padding: "30px 24px 8px" }}>
         <Text
           style={{
             margin: 0,
-            fontFamily: font.display,
-            fontSize: "11px",
-            letterSpacing: "1.8px",
-            textTransform: "uppercase",
+            fontFamily: font.serif,
+            fontSize: "14px",
+            lineHeight: "20px",
             color: color.orangeDeep,
           }}
         >
@@ -100,10 +101,9 @@ export function IssueLetter({
           style={{
             margin: "10px 0 0",
             fontFamily: font.display,
+            fontWeight: displayWeight,
             fontSize: "30px",
-            lineHeight: "33px",
-            letterSpacing: "0.5px",
-            textTransform: "uppercase",
+            lineHeight: "36px",
             color: color.ink,
           }}
         >
@@ -131,16 +131,13 @@ export function IssueLetter({
             color: color.cream,
           }}
         >
-          Just hit reply — I read everything, and recommendations back are the
-          whole point.
+          Got something I should listen to? Reply and tell me.
         </Text>
         <Text
           style={{
             margin: "14px 0 0",
-            fontFamily: font.display,
-            fontSize: "11px",
-            letterSpacing: "1.4px",
-            textTransform: "uppercase",
+            fontFamily: font.serif,
+            fontSize: "14px",
           }}
         >
           <Link href={permalink} style={{ color: color.cream }}>

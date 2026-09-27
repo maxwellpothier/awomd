@@ -44,3 +44,6 @@ next-env.d.ts
 # local send state and private data
 /.sends/
 /content/recipients.txt
+
+# Trial fonts downloaded while choosing a typeface. Licences forbid publishing them.
+/public/dev-fonts/

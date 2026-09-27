@@ -7,16 +7,13 @@ export const site = {
   name: "A Week on My Desk",
   /** Replies land here via Namecheap forwarding (PLAN.md, Stack). */
   replyAddress: "max@awomd.com",
-  /** The schedule, as shown next to the date in the reading pane. */
-  sendTime: "4:00 PM",
 } as const;
 
-/**
- * Where the signup form posts. Not wired up yet: the route handler, the
- * subscribers table, and the confirmation email are build-order step 8 in
- * PLAN.md.
- */
+/** Where the signup form posts. Double opt-in starts there. */
 export const subscribeAction = "/api/subscribe";
+
+/** Carries the address from the form to "check your inbox", for ten minutes. */
+export const signupEmailCookie = "awomd_signup_email";
 
 /**
  * Mailto unsubscribe, the same stand-in the send command uses until

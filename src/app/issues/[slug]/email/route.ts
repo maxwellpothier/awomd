@@ -24,9 +24,11 @@ export async function GET(
   const rendered = await renderIssueEmail({
     slug,
     baseUrl,
-    // Previews are not addressed to anyone; the send command substitutes a
-    // real tokenised URL per recipient.
-    unsubscribeUrl: `${baseUrl}/unsubscribe?preview=1`,
+    // The same URL for every recipient, because there are no per-recipient
+    // tokens until the subscribers table lands. The page it points at explains
+    // how to get off the list; it does not pretend to have done it. When tokens
+    // arrive this gains a `?token=` and nothing else here changes.
+    unsubscribeUrl: `${baseUrl}/unsubscribe`,
   });
 
   const wantsText = url.searchParams.get("text") !== null;
