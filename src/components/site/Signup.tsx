@@ -99,15 +99,21 @@ function Sent({ email }: { email?: string }) {
   return (
     <>
       <Headline>Check your email</Headline>
+      {/* The address gets a line of its own so it never breaks mid-word
+          across two. One too long for a line breaks after the @ if it can. */}
       <Lede>
-        I just sent a confirmation link
         {email ? (
           <>
-            {" "}
-            to <strong className="break-all font-semibold">{email}</strong>
+            I just sent a confirmation link to
+            <strong className="block font-semibold [overflow-wrap:anywhere]">
+              {email.split("@")[0]}@<wbr />
+              {email.split("@").slice(1).join("@")}
+            </strong>
           </>
-        ) : null}
-        . Click it and you&rsquo;re on the list.
+        ) : (
+          "I just sent a confirmation link. "
+        )}
+        Click it and you&rsquo;re on the list.
       </Lede>
       <Note>
         Nothing after a few minutes? Check your spam folder, or email me at{" "}
