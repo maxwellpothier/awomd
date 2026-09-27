@@ -28,6 +28,7 @@ export default function ComponentsGallery() {
   }) as Record<string, Block>;
   const { Section, Album, Media, Track, PullQuote, Divider } = map;
   const { p: P, a: A, strong: Strong, ul: Ul, blockquote: Quote } = map;
+  const Wrapper = map.wrapper;
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-14">
@@ -107,6 +108,17 @@ export default function ComponentsGallery() {
 
         <Specimen label="Divider">
           <Divider />
+        </Specimen>
+
+        <Specimen label="Divider, torn (inside the letter's body wrapper)">
+          <Wrapper>
+            <P>
+              The end of the long part, where the album writing wraps up and
+              the letter turns to something lighter.
+            </P>
+            <Divider tear />
+            <P>A few tracks worth a mention, on the sheet underneath.</P>
+          </Wrapper>
         </Specimen>
 
         <Specimen label="Markdown primitives">

@@ -8,11 +8,13 @@ import {
   Text,
 } from "@react-email/components";
 import type { MDXComponents } from "mdx/types";
+import { Children, Fragment, isValidElement, type ReactNode } from "react";
 import { color, displayWeight, font, pillColors } from "@/design/tokens";
 import {
   kindLabel,
   listenUrl,
   type CardProps,
+  type DividerProps,
   type Pills as PillList,
   type PullQuoteProps,
   type SectionProps,
@@ -368,7 +370,34 @@ export function createEmailComponents(at: {
     );
   }
 
-  function Divider() {
+  /**
+   * The torn divider is an image (scripts/tear-divider.mts, `npm run
+   * divider`): email can't clip to a shape. It runs the letter's full width,
+   * so it only sits at the top level of an issue, where `wrapper` lifts it
+   * out of the gutters. Transparent around the tear, so the letter's own
+   * background shows through; empty alt, so a client with images off leaves
+   * a blank gap rather than a label.
+   */
+  function Divider({ tear }: DividerProps) {
+    if (tear) {
+      return (
+        <EmailSection style={{ padding: "22px 0 6px" }}>
+          <Img
+            src={absolute("/brand/divider-tear.png")}
+            alt=""
+            width="600"
+            height="26"
+            style={{
+              display: "block",
+              width: "100%",
+              maxWidth: "600px",
+              height: "auto",
+              border: 0,
+            }}
+          />
+        </EmailSection>
+      );
+    }
     return (
       <Hr
         style={{
@@ -380,7 +409,50 @@ export function createEmailComponents(at: {
     );
   }
 
+  /**
+   * The issue body, and where its gutters live: not on the letter, so a torn
+   * Divider can run edge to edge. The body is cut into sheets at each tear,
+   * each sheet padded, the tears full width between them.
+   *
+   * MDX hands the wrapper its content as a single element (its
+   * `_createMdxContent`, which carries the `components` prop); calling it
+   * gives the top-level blocks to cut. Anything else is taken as the blocks
+   * already, which is what the gallery passes.
+   */
+  function wrapper({ children }: { children?: ReactNode }) {
+    let content: ReactNode = children;
+    if (
+      isValidElement<{ components?: unknown }>(children) &&
+      typeof children.type === "function" &&
+      "components" in children.props
+    ) {
+      content = (children.type as (props: object) => ReactNode)(children.props);
+    }
+    if (isValidElement<{ children?: ReactNode }>(content) && content.type === Fragment) {
+      content = content.props.children;
+    }
+
+    const sheets: ReactNode[][] = [[]];
+    const tears: ReactNode[] = [];
+    for (const block of Children.toArray(content)) {
+      if (isValidElement<DividerProps>(block) && block.type === Divider && block.props.tear) {
+        tears.push(block);
+        sheets.push([]);
+      } else {
+        sheets[sheets.length - 1].push(block);
+      }
+    }
+
+    return sheets.map((sheet, i) => (
+      <Fragment key={i}>
+        {i > 0 ? tears[i - 1] : null}
+        <EmailSection style={{ padding: "0 24px" }}>{sheet}</EmailSection>
+      </Fragment>
+    ));
+  }
+
   return {
+    wrapper,
     Section,
     Album: Card,
     Media: Card,

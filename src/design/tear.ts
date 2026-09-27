@@ -20,7 +20,12 @@ export interface TearPoint {
 /** Points across the edge. Enough that the fibers read as fibers. */
 const steps = 160;
 
-function tear(seed: number, below: (strength: number, random: () => number) => number) {
+export function tear(
+  seed: number,
+  below: (strength: number, random: () => number) => number,
+  /** Shifts the waves along the edge, so a second tear isn't the first one again. */
+  phase = 0,
+) {
   // mulberry32: a tiny seeded generator. Change a seed for a different tear.
   const random = () => {
     seed = (seed + 0x6d2b79f5) | 0;
@@ -32,9 +37,9 @@ function tear(seed: number, below: (strength: number, random: () => number) => n
   const points: TearPoint[] = [];
   for (let i = 0; i <= steps; i++) {
     const t = 1 - i / steps;
-    const waves = 2.2 * Math.sin(t * 19 + 1) + 1.3 * Math.sin(t * 47 + 4);
+    const waves = 2.2 * Math.sin(t * 19 + 1 + phase) + 1.3 * Math.sin(t * 47 + 4 + phase);
     // 0.2 where the paper tore cleanly, 1 where it ripped.
-    const strength = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t * 9 + 2.5)) ** 2;
+    const strength = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t * 9 + 2.5 + phase)) ** 2;
     points.push({ t, y: waves + below(strength, random) });
   }
   return points;

@@ -1,5 +1,6 @@
 import {
   Body,
+  Button,
   Container,
   Head,
   Html,
@@ -48,6 +49,7 @@ export function IssueLetter({
   children,
 }: IssueLetterProps) {
   const logo = `${baseUrl.replace(/\/$/, "")}/brand/email-banner.png`;
+  const footerTear = `${baseUrl.replace(/\/$/, "")}/brand/footer-tear.png`;
 
   return (
     <Container
@@ -111,14 +113,38 @@ export function IssueLetter({
         </Text>
       </Section>
 
-      <Section style={{ padding: "8px 24px 36px" }}>{children}</Section>
+      {/* No side padding: the issue's `wrapper` (blocks/email.tsx) pads the
+          body itself, so a torn divider can run the letter's full width. */}
+      <Section style={{ padding: "8px 0 36px" }}>{children}</Section>
 
-      {/* Footer. Unsubscribe works on first click, no login, no
-          confirmation page. Postal address is deferred per PLAN.md. */}
+      {/*
+        Footer: a navy sheet torn along its top and laid on the letter, the
+        banner's tear turned to face up. The tear is baked into an image
+        (scripts/tear-footer.mts, `npm run footer`), transparent above it; the
+        rest is a plain navy cell, flat to match, so the copy stays live text.
+
+        Unsubscribe works on first click, no login, no confirmation page.
+        Postal address is deferred per PLAN.md.
+      */}
+      <Section style={{ padding: 0 }}>
+        <Img
+          src={footerTear}
+          alt=""
+          width="600"
+          height="28"
+          style={{
+            display: "block",
+            width: "100%",
+            maxWidth: "600px",
+            height: "auto",
+            border: 0,
+          }}
+        />
+      </Section>
       <Section
         style={{
           backgroundColor: color.navy,
-          padding: "26px 24px",
+          padding: "14px 24px 30px",
           textAlign: "center",
         }}
       >
@@ -126,26 +152,38 @@ export function IssueLetter({
           style={{
             margin: 0,
             fontFamily: font.serif,
-            fontSize: "14px",
-            lineHeight: "22px",
+            fontSize: "17px",
+            lineHeight: "26px",
             color: color.cream,
           }}
         >
-          Got something I should listen to? Reply and tell me.
+          {"That's the desk this week. Reply and tell me what's on yours."}
         </Text>
-        <Text
+        <Button
+          href={unsubscribeUrl}
           style={{
-            margin: "14px 0 0",
+            marginTop: "22px",
+            padding: "9px 20px",
+            border: `1px solid ${color.cream}`,
+            borderRadius: "999px",
             fontFamily: font.serif,
             fontSize: "14px",
+            lineHeight: "20px",
+            color: color.cream,
+          }}
+        >
+          Unsubscribe
+        </Button>
+        <Text
+          style={{
+            margin: "18px 0 0",
+            fontFamily: font.serif,
+            fontSize: "13px",
+            lineHeight: "18px",
           }}
         >
           <Link href={permalink} style={{ color: color.cream }}>
             Read in browser
-          </Link>
-          <span style={{ color: color.cream, opacity: 0.4 }}>{"   ·   "}</span>
-          <Link href={unsubscribeUrl} style={{ color: color.cream }}>
-            Unsubscribe
           </Link>
         </Text>
       </Section>

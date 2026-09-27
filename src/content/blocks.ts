@@ -88,6 +88,14 @@ export interface PullQuoteProps {
   cite?: string;
 }
 
+export interface DividerProps {
+  /**
+   * A torn-paper break instead of the hairline: the letter above is a sheet
+   * torn along here and laid over the next. For the big turns in an issue.
+   */
+  tear?: boolean;
+}
+
 /** Where a block sits, so outbound links stay identifiable as ours. */
 export interface BlockLocation {
   /** Issue slug, e.g. "2026-09-20". */

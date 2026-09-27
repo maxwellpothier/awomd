@@ -10,6 +10,8 @@
     "lint": "eslint",
     "tokens:check": "node scripts/check-tokens.mts",
     "banner": "node scripts/tear-banner.mts",
+    "divider": "node scripts/tear-divider.mts",
+    "footer": "node scripts/tear-footer.mts",
     "send": "node --env-file-if-exists=.env.local scripts/send.mts"
   },
   "dependencies": {
