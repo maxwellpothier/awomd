@@ -5,7 +5,7 @@ import { site } from "@/content/site";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "I'm Max. Every Sunday at 4pm I send one email about the music I've had on repeat.",
+    "I'm Max. Every Sunday I send one email about the music I've had on repeat.",
 };
 
 const textLink =
@@ -21,7 +21,7 @@ export default function AboutPage() {
       <div className="mt-8 space-y-6 text-[19px] leading-[1.65]">
         <p>
           I&rsquo;m Max, and this is my weekly email about music. Every Sunday
-          at {site.sendTime} I send out whatever I kept coming back to that
+          evening I send out whatever I kept coming back to that
           week. Usually that&rsquo;s albums and songs, sometimes a documentary
           or a book, with some notes on each.
         </p>

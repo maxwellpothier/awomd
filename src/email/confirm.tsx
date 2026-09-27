@@ -88,8 +88,7 @@ function ConfirmEmail({ baseUrl, confirmUrl }: ConfirmEmailProps) {
               }}
             >
               Thanks for signing up for {site.name}. Click the button below
-              and the next issue will land in your inbox on Sunday at{" "}
-              {site.sendTime}.
+              and the next issue will land in your inbox on Sunday evening.
             </Text>
             <Button
               href={confirmUrl}

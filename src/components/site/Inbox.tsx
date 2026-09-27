@@ -194,7 +194,7 @@ function IssueMessage({ meta }: { meta: IssueMeta }) {
       <MessageHeader
         subject={meta.title}
         suffix={`Issue ${meta.number}`}
-        dateLine={`${issueDateLabel(meta.date)}, ${site.sendTime}`}
+        dateLine={issueDateLabel(meta.date)}
         replySubject={`Re: ${meta.title}`}
       />
       <Letter meta={meta} />
@@ -217,7 +217,7 @@ function EmptyPane() {
         </p>
         <p className="mt-2 text-[15px] text-ink-muted">
           {empty
-            ? `The first one goes out on a Sunday at ${site.sendTime}.`
+            ? "The first one goes out on a Sunday evening."
             : "Pick an issue to read it."}
         </p>
         {empty ? (

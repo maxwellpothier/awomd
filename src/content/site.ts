@@ -7,8 +7,6 @@ export const site = {
   name: "A Week on My Desk",
   /** Replies land here via Namecheap forwarding (PLAN.md, Stack). */
   replyAddress: "max@awomd.com",
-  /** The schedule, as shown next to the date in the reading pane. */
-  sendTime: "4pm",
 } as const;
 
 /** Where the signup form posts. Double opt-in starts there. */

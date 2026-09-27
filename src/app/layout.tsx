@@ -5,7 +5,7 @@ import "./globals.css";
 
 const siteName = "A Week on My Desk";
 const description =
-  "A weekly email about the albums and songs I've had on repeat, sent every Sunday at 4pm. From Max.";
+  "More people should share the music that moves them, so here's mine, every Sunday evening.";
 
 /**
  * Every page opens on navy (the masthead or the slim bar), so the browser's

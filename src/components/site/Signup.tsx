@@ -47,7 +47,7 @@ export function Signup({
  */
 function Headline({ children }: { children: ReactNode }) {
   return (
-    <h1 className="font-display text-[44px] leading-[1.08] sm:text-[64px]">
+    <h1 className="text-balance font-display text-[44px] leading-[1.08] sm:text-[64px]">
       <span className="highlight">{children}</span>
     </h1>
   );
@@ -55,7 +55,7 @@ function Headline({ children }: { children: ReactNode }) {
 
 function Lede({ children }: { children: ReactNode }) {
   return (
-    <p className="mt-5 text-lg leading-[1.6] sm:mt-6 sm:text-[19px] sm:leading-[1.65]">
+    <p className="mt-5 text-pretty text-lg leading-[1.6] sm:mt-6 sm:text-[19px] sm:leading-[1.65]">
       {children}
     </p>
   );
@@ -82,12 +82,12 @@ function MailMe({ subject }: { subject: string }) {
 function Form() {
   return (
     <>
-      <Headline>Music I can&rsquo;t stop playing, every Sunday</Headline>
+      <Headline>Music worth passing along</Headline>
       <Lede>
-        I&rsquo;m Max. Once a week I write about the albums and songs I&rsquo;ve
-        had on repeat, plus the odd documentary or book, and send it out Sunday
-        at {site.sendTime}. It&rsquo;s mostly for friends and family, and my
-        favorite part is when someone writes back with something for me to hear.
+        More people should share the music that moves them, so here&rsquo;s
+        mine. Every Sunday evening I send out the albums and songs that stayed
+        on my desk all week. Some of it will be strange, but that&rsquo;s the
+        point.
       </Lede>
 
       <SignupForm />
@@ -138,7 +138,7 @@ function Confirmed({ latest }: { latest?: IssueMeta }) {
     <>
       <Headline>You&rsquo;re on the list</Headline>
       <Lede>
-        The next issue goes out Sunday at {site.sendTime}.
+        The next issue goes out Sunday evening.
         {latest ? (
           <>
             {" "}
