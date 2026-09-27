@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "tokens:check": "node scripts/check-tokens.mts",
+    "banner": "node scripts/tear-banner.mts",
     "send": "node --env-file-if-exists=.env.local scripts/send.mts"
   },
   "dependencies": {

@@ -1,10 +1,20 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Header } from "@/components/site/Header";
+import { color } from "@/design/tokens";
 import "./globals.css";
 
 const siteName = "A Week on My Desk";
 const description =
   "A weekly email about the albums and songs I've had on repeat, sent every Sunday at 4pm. From Max.";
+
+/**
+ * Every page opens on navy (the masthead or the slim bar), so the browser's
+ * own chrome above the page — Safari's status bar area — is tinted to match
+ * rather than showing a cream strip over the navy.
+ */
+export const viewport: Viewport = {
+  themeColor: color.navy,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://awomd.com"),

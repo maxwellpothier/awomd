@@ -41,6 +41,10 @@
 
 html {
   color-scheme: light;
+  /* Navy behind the page, for browsers that tint their chrome from the page
+     rather than from theme-color (Safari), and for the rubber-band scroll
+     past the top. The body paints the cream over it. */
+  background: var(--navy);
 }
 
 body {
@@ -60,8 +64,6 @@ body {
    stays centered in the navy above the tear. */
 .masthead {
   --slant: clamp(24px, 5vw, 72px);
-  /* The paler inside of the paper, showing where it ripped. */
-  --paper-core: #fffefa;
   filter: drop-shadow(0 2px 3px rgb(15 19 30 / 0.28));
 }
 

@@ -47,7 +47,7 @@ export function IssueLetter({
   unsubscribeUrl,
   children,
 }: IssueLetterProps) {
-  const logo = `${baseUrl.replace(/\/$/, "")}/brand/email-logo.jpg`;
+  const logo = `${baseUrl.replace(/\/$/, "")}/brand/email-banner.png`;
 
   return (
     <Container
@@ -60,16 +60,21 @@ export function IssueLetter({
     >
       {/*
         The banner is the image, full bleed — not a logo sitting on a navy
-        cell. The navy and its texture are baked into the JPEG, so there is
-        no seam to match, and a client that force-inverts backgrounds in
-        dark mode cannot strand the wordmark on the wrong ground.
+        cell. The navy and its texture are baked in, so there is no seam to
+        match, and a client that force-inverts backgrounds in dark mode cannot
+        strand the wordmark on the wrong ground.
+
+        Its bottom edge is torn, the same tear as the site's masthead, baked
+        in because email can't clip to a shape (scripts/tear-banner.mts,
+        `npm run banner`). Below the tear the PNG is transparent, so the
+        letter's own background shows through, cream or darkened.
       */}
       <Section style={{ padding: 0 }}>
         <Img
           src={logo}
           alt="A Week on My Desk"
           width="600"
-          height="306"
+          height="338"
           style={{
             display: "block",
             width: "100%",
@@ -79,9 +84,6 @@ export function IssueLetter({
           }}
         />
       </Section>
-      <Section
-        style={{ backgroundColor: color.orange, height: "4px", lineHeight: "4px" }}
-      />
 
       <Section style={{ padding: "30px 24px 8px" }}>
         <Text

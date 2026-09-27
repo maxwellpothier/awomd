@@ -111,6 +111,10 @@ Direction read from the logo (blocky extruded orange letters on navy):
   images of the headlines.
 - **Cover art carries the color.** Everything else stays restrained.
 - **Texture** only on the site header and logo, never in email components.
+- **Torn paper** (2026-09-26): the homepage masthead and the email banner end
+  in the same tear (`src/design/tear.ts`). The site clips to it; email can't
+  clip, so it is baked into `public/brand/email-banner.png` over transparency
+  (`npm run banner`), which replaced the orange rule under the banner.
 - **Dark mode handled explicitly**: `color-scheme` meta, tested on iPhone
   Apple Mail and Gmail in dark mode before the first send.
 

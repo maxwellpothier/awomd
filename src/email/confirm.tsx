@@ -50,10 +50,12 @@ function ConfirmEmail({ baseUrl, confirmUrl }: ConfirmEmailProps) {
         >
           <Section style={{ padding: 0 }}>
             <Img
-              src={`${baseUrl}/brand/email-logo.jpg`}
+              // The letter's torn banner (see IssueEmail), so the first
+              // email a subscriber gets opens the way every issue does.
+              src={`${baseUrl}/brand/email-banner.png`}
               alt={site.name}
               width="600"
-              height="306"
+              height="338"
               style={{
                 display: "block",
                 width: "100%",
@@ -63,9 +65,6 @@ function ConfirmEmail({ baseUrl, confirmUrl }: ConfirmEmailProps) {
               }}
             />
           </Section>
-          <Section
-            style={{ backgroundColor: color.orange, height: "4px", lineHeight: "4px" }}
-          />
 
           <Section style={{ padding: "30px 24px 36px" }}>
             <Text

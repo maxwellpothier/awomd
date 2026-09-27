@@ -4,61 +4,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NavLinks, SubscribeButton } from "@/components/site/Nav";
+import { coreDepth, coreTear, navyTear, paperCore, type TearPoint } from "@/design/tear";
 import logo from "../../../public/brand/logo.png";
 
 /**
- * The masthead's bottom edge is a paper tear: the navy sheet is torn along
- * the slant from globals.css and laid on the cream page, with the paler core
- * of the paper showing along the rip and a soft shadow under it.
- *
- * The tear has three parts: slow waves for the hand, fine jagged steps for
- * the fibers, and a strength that swells and fades along the edge, so some
- * stretches run almost straight and others rip. Nothing is random at render
- * time: the jags come from a seeded generator, so every load and the server
- * render draw the same tear. Sizes are in pixels, so the tear stays
- * paper-sized however wide the screen is.
+ * The masthead's torn bottom edge as a clip-path: the shared tear
+ * (src/design/tear.ts) along the slant from globals.css, laid on the cream
+ * page with the paler core of the paper showing along the rip.
  */
-function tear(seed: number, below: (strength: number, random: () => number) => number) {
-  // mulberry32: a tiny seeded generator. Change a seed for a different tear.
-  const random = () => {
-    seed = (seed + 0x6d2b79f5) | 0;
-    let x = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x;
-    return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
-  };
-
-  const steps = 160;
-  const points = ["0 0", "100% 0"];
-  for (let i = 0; i <= steps; i++) {
-    const t = 1 - i / steps; // 1 at the right edge, 0 at the left
-    const waves = 2.2 * Math.sin(t * 19 + 1) + 1.3 * Math.sin(t * 47 + 4);
-    // 0.2 where the paper tore cleanly, 1 where it ripped.
-    const strength = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t * 9 + 2.5)) ** 2;
-    const y = waves + below(strength, random);
-    points.push(
+function clip(points: TearPoint[]) {
+  const edge = points.map(
+    ({ t, y }) =>
       `${(t * 100).toFixed(3)}% calc(100% - ${coreDepth}px - var(--slant) * ${t.toFixed(4)} + ${y.toFixed(2)}px)`,
-    );
-  }
-  return `polygon(${points.join(", ")})`;
+  );
+  return `polygon(0 0, 100% 0, ${edge.join(", ")})`;
 }
 
-/**
- * Room left under the navy for the core to show in: the navy's edge is drawn
- * this far up, and the core's edge is pushed back down into it.
- */
-const coreDepth = 8;
-
-/** The navy sheet's edge: the jags, drawn above the core's reach. */
-const navyEdge = tear(20260926, (strength, random) => (random() - 0.5) * 5 * strength);
-
-/**
- * The core's edge: the same waves, pushed a few pixels further down where
- * the paper ripped hardest, with its own finer jags.
- */
-const coreEdge = tear(
-  4096,
-  (strength, random) => 1 + strength * (2 + random() * 4) + (random() - 0.5) * 2,
-);
+const navyEdge = clip(navyTear);
+const coreEdge = clip(coreTear);
 
 /**
  * The app bar, in two sizes.
@@ -80,8 +43,8 @@ export function Header() {
         {/* The paper's core, showing along the rip. */}
         <div
           aria-hidden
-          className="absolute inset-0 bg-[var(--paper-core)]"
-          style={{ clipPath: coreEdge }}
+          className="absolute inset-0"
+          style={{ background: paperCore, clipPath: coreEdge }}
         />
         <header
           className="relative bg-navy text-cream"
