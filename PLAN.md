@@ -14,7 +14,7 @@ Goals, in Max's words:
 2. Write thoughts out to understand the music more deeply.
 3. Connect with friends and family, and maybe inspire them to do the same.
 
-First issue: Sunday 2026-09-20, 4pm. Quality over speed; ship when it's right.
+First issue: Sunday 2026-09-27, 4pm. Quality over speed; ship when it's right.
 
 ## Principles
 
@@ -50,8 +50,9 @@ Initial block palette (will grow; the abstraction is what's fixed):
 - **Prose** — markdown.
 - **AlbumCard** — cover, artist, title, year, pills, listen link, prose beneath.
   Can nest Tracks.
-- **Track** — title, artist, pills, listen link, one-line note. Standalone or
-  nested under an AlbumCard.
+- **Track** — title, artist, cover, pills, listen link, and a short note
+  written as children, so it can hold links (2026-09-27, was a `note` string).
+  Standalone or nested under an AlbumCard.
 - **Pills** — freeform strings on any card or track ("rage", "acoustic",
   "twangy"). A *property*, not a block; pills never stand on their own.
 
@@ -102,7 +103,13 @@ Direction read from the logo (blocky extruded orange letters on navy):
   with reply and unsubscribe at its bottom, so the site has no footer of its
   own — two navy footers stacked was the alternative.
 - **Navy body text**, not black.
-- **Orange is scarce**: pills, links, section-title accents.
+- **Orange is scarce**: section-title accents.
+- **Pills are coloured chips** (2026-09-27, replacing orange text joined by
+  dots): rounded, soft tints with navy text, the tint picked from the pill's
+  text so a genre keeps its colour across issues. The one place besides cover
+  art that adds colour.
+- **Links in the letter's prose are default blue** (`#0000ee`, underlined;
+  chosen by Max 2026-09-27), so they read as links at a glance.
 - **Installed fonts only, site and email alike** (chosen by Max 2026-09-26):
   Avenir Next Condensed Heavy for headlines, Georgia for everything else.
   Gmail and Outlook ignore webfonts, so a loaded face would only ever reach
@@ -161,8 +168,8 @@ Decided 2026-09-19; the alternative was compiling MDX separately in the script.
 A command (not cron, not a button, for now):
 
 ```
-npm run send -- --issue 2026-09-20 --to me      # renders, sends to Max only
-npm run send -- --issue 2026-09-20 --to list    # sends to all confirmed subscribers
+npm run send -- --issue 2026-09-27 --to me      # renders, sends to Max only
+npm run send -- --issue 2026-09-27 --to list    # sends to all confirmed subscribers
 ```
 
 - Self-send is a required first step. Read it on a phone in Gmail and Apple
@@ -303,5 +310,25 @@ serves the previous compilation. If a change to an issue does not appear, `rm -r
   on an environment approval gate for the phone check before the list
   send. A Sunday 4pm scheduled job that sends whatever is registered and
   unsent is a small addition on top of that.
+- **Kid-safety highlights** — raised 2026-09-27 during issue 001, parked for
+  a later issue. Song and album names get a highlighter swipe like the
+  homepage headline: none means safe to play in front of Max's kids, yellow
+  means cautious, red means wouldn't. A disclaimer at the very top of the
+  letter explains the key. Email can't use the homepage's data-URI SVG
+  (Gmail blocks data URIs), so the band would be a hosted PNG per colour as
+  a `background-image`. Per caniemail: fine in Apple Mail, Gmail (web, and
+  the apps with a Google account), Outlook.com and new Outlook, Yahoo,
+  Samsung; missing in classic Outlook and Windows Mail, and missized in
+  Gmail's mobile web and with non-Google accounts. Where it fails nothing
+  shows, so a flagged song reads as safe; consider a small text marker as
+  well. Check Gmail's forced dark mode, which lightens text but not the band.
+  The pills keep their butter and rose tints (Max's call).
+- **Windows and classic Outlook headline fonts** — parked 2026-09-27. Readers
+  there get whatever the stack gives them, and that's accepted for now. Two
+  gaps to revisit: classic Outlook may drop to Times New Roman because the
+  first font in the headline stack isn't installed (untested; the fix is an
+  `<!--[if mso]>` style naming Arial Narrow, Arial), and Windows without
+  Office has no Arial Narrow, so headlines fall to plain Arial Bold (Impact or
+  Bahnschrift would keep them condensed; see `docs/email-safe-fonts.md`).
 - Analytics dashboard (queries on `events` suffice)
 - Custom domain for the components gallery or any auth

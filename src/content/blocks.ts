@@ -62,10 +62,14 @@ export interface CardProps {
 export interface TrackProps {
   title: string;
   artist: string;
+  cover?: string;
   pills?: Pills;
   href?: string;
-  /** One line. Longer thoughts belong in a card's prose. */
-  note?: string;
+  /**
+   * A line or two beneath the track, written as the element's children so it
+   * can hold links. Longer thoughts belong in a card's prose.
+   */
+  children?: ReactNode;
 }
 
 export interface SectionProps {

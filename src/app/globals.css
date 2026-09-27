@@ -13,6 +13,7 @@
   --orange-deep: #ac2b0e;
   --ink: var(--navy);
   --ink-muted: #4a5163;
+  --link: #0000ee;
 
   /* Type. Installed fonts only, so the site and the inbox draw the same
      letters; see the note on `font` in tokens.ts. */

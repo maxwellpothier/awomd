@@ -23,12 +23,12 @@ export interface IssueMeta {
 /** Newest first. */
 export const issues: IssueMeta[] = [
   {
-    slug: "2026-09-20",
+    slug: "2026-09-27",
     number: "001",
     title: "The Gen Z Kids Are Alright",
-    date: "2026-09-20",
+    date: "2026-09-27",
     preview:
-      "Two years ago I'd have told you Gen Z was in a music drought. Now it's most of what excites me. Lucy Bedroque, Mary in the Junkyard, and a few tracks.",
+      "Two years ago I'd have told you Gen Z was in a music drought. Now it's most of what excites me. Lucy Bedroque, mary in the junkyard, and a few tracks.",
   },
 ];
 

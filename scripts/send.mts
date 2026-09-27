@@ -1,9 +1,9 @@
 /**
  * Send an issue.
  *
- *   npm run send -- --issue 2026-09-20 --to me
- *   npm run send -- --issue 2026-09-20 --to list --dry-run
- *   npm run send -- --issue 2026-09-20 --to list
+ *   npm run send -- --issue 2026-09-27 --to me
+ *   npm run send -- --issue 2026-09-27 --to list --dry-run
+ *   npm run send -- --issue 2026-09-27 --to list
  *
  * The command does not render the email. It fetches the render from the running
  * app, which is the same URL the preview toggle opens — so what was reviewed is
@@ -31,7 +31,7 @@ function fail(message: string): never {
   process.exit(1);
 }
 
-const slug = values.issue ?? fail("--issue is required, e.g. --issue 2026-09-20");
+const slug = values.issue ?? fail("--issue is required, e.g. --issue 2026-09-27");
 const audience = values.to ?? fail("--to is required: 'me' or 'list'");
 const dryRun = values["dry-run"] === true;
 

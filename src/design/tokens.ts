@@ -22,7 +22,23 @@ export const color = {
   orangeDeep: "#ac2b0e",
   ink: "#0f131e",
   inkMuted: "#4a5163",
+  /** Links in the letter's prose: the browser's own default link blue. */
+  link: "#0000ee",
 } as const;
+
+/**
+ * Pill backgrounds: soft tints that all carry navy text. A pill's colour comes
+ * from its text, so "rage" is the same colour in every issue. Email-only (the
+ * site shows the email render), so they have no counterpart in globals.css.
+ */
+export const pillColors = [
+  "#fbd5c0", // peach
+  "#f6e49a", // butter
+  "#c9e8cf", // mint
+  "#cadff3", // sky
+  "#e0d3f2", // lilac
+  "#f6cbd7", // rose
+] as const;
 
 /**
  * Installed fonts only, on the site as well as in email: Gmail and Outlook

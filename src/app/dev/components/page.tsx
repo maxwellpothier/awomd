@@ -71,8 +71,12 @@ export default function ComponentsGallery() {
               artist="Another Placeholder"
               href="https://example.com/track"
               pills={["quiet"]}
-              note="One line about why this track and not the others."
-            />
+            >
+              <P>
+                One line about why this track and not the others, with{" "}
+                <A href="https://example.com">a link</A>.
+              </P>
+            </Track>
           </Album>
         </Specimen>
 
@@ -89,8 +93,9 @@ export default function ComponentsGallery() {
           <Track
             title="A Standalone Track"
             artist="Third Placeholder"
-            note="The sparse path has to look deliberate too."
-          />
+          >
+            <P>The sparse path has to look deliberate too.</P>
+          </Track>
         </Specimen>
 
         <Specimen label="PullQuote">
