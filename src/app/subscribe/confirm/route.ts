@@ -1,4 +1,7 @@
+import { after } from "next/server";
 import { db } from "@/db/supabase";
+import { resendRelay } from "@/email/relay";
+import { site } from "@/content/site";
 
 /**
  * The link in the confirmation email. Step two of double opt-in: the token
@@ -23,9 +26,13 @@ export async function GET(request: Request) {
       .update({ status: "confirmed", confirmed_at: new Date().toISOString() })
       .eq("confirm_token", token)
       .eq("status", "pending")
-      .select("id");
+      .select("id, email");
     if (error) throw error;
-    if (confirmed.length > 0) return back("?confirmed=1");
+    if (confirmed.length > 0) {
+      // After the redirect, so the new subscriber never waits on it.
+      after(() => notifyMax(confirmed[0].email));
+      return back("?confirmed=1");
+    }
 
     // Nothing pending under this token. Clicking the link twice, or a mail
     // scanner getting there first, should still read as success.
@@ -39,4 +46,40 @@ export async function GET(request: Request) {
     console.error("confirm failed:", error);
     return back("?error=1");
   }
+}
+
+/**
+ * Tells Max someone new is on the list. Only on confirm, not on signup, so
+ * typos and people who never click don't count. A failure here is logged and
+ * dropped: the subscriber is already confirmed.
+ */
+async function notifyMax(email: string) {
+  try {
+    const { count } = await db()
+      .from("subscribers")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "confirmed");
+    const total = count === null ? "" : ` (${count} on the list)`;
+    const line = `${email} just confirmed${total}.`;
+
+    const from = process.env.SEND_FROM;
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!from || !apiKey) throw new Error("SEND_FROM and RESEND_API_KEY must be set");
+
+    await resendRelay({ apiKey, from }).send({
+      to: site.replyAddress,
+      subject: `New subscriber: ${email}`,
+      text: line,
+      html: `<p>${escapeHtml(line)}</p>`,
+    });
+  } catch (error) {
+    console.error("new-subscriber notice failed:", error);
+  }
+}
+
+function escapeHtml(value: string) {
+  return value.replace(
+    /[&<>"']/g,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!,
+  );
 }

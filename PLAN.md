@@ -178,6 +178,9 @@ npm run send -- --issue 2026-09-20 --to list    # sends to all confirmed subscri
 
 - **Double opt-in.** Form → confirmation email → confirm link → subscribed.
 - Subscribe form ships with the site; the first send can go to a hand-made list.
+- Each confirm emails Max at the reply address ("New subscriber: …", with the
+  running count). On confirm rather than signup, so typos and no-shows stay
+  quiet. Added 2026-09-27.
 - Tables: `subscribers` (email, status, tokens, timestamps), `sends`
   (subscriber, issue, sent_at, relay message id), `events` (subscriber, issue,
   type, link, timestamp — raw relay webhook events).
