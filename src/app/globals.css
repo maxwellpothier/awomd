@@ -41,14 +41,15 @@
 
 html {
   color-scheme: light;
-  /* Navy behind the page, for browsers that tint their chrome from the page
-     rather than from theme-color (Safari), and for the rubber-band scroll
-     past the top. The body paints the cream over it. */
   background: var(--navy);
 }
 
+/* Navy, because Safari 26 tints its status bar from the body's background and
+   ignores theme-color; every page opens on navy, so the bar runs into it. It
+   also covers the rubber-band scroll past the top. The cream is painted by
+   the page wrapper in the root layout. */
 body {
-  background: var(--cream);
+  background: var(--navy);
   color: var(--ink);
   font-family: var(--type-serif);
 }

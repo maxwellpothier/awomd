@@ -9,8 +9,9 @@ const description =
 
 /**
  * Every page opens on navy (the masthead or the slim bar), so the browser's
- * own chrome above the page — Safari's status bar area — is tinted to match
- * rather than showing a cream strip over the navy.
+ * own chrome above the page is tinted to match rather than showing a cream
+ * strip over the navy. Chrome reads theme-color; Safari 26 reads the body's
+ * background instead (see globals.css).
  */
 export const viewport: Viewport = {
   themeColor: color.navy,
@@ -48,8 +49,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className="h-full antialiased"
     >
       <body className="flex min-h-full flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
+        <div className="flex flex-1 flex-col bg-cream">
+          <Header />
+          <main className="flex-1">{children}</main>
+        </div>
       </body>
     </html>
   );
