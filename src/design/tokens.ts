@@ -25,13 +25,23 @@ export const color = {
 } as const;
 
 /**
- * Email cannot load webfonts reliably, so every stack degrades to something
- * deliberate. The display face is condensed and heavy; its fallbacks are
- * chosen to stay condensed rather than collapse to Helvetica.
+ * Installed fonts only, on the site as well as in email: Gmail and Outlook
+ * ignore webfonts, so a loaded face would be a different letter for half the
+ * readers. docs/email-safe-fonts.md has who has what.
+ *
+ * Headlines are Avenir Next Condensed, on every iPhone and Mac. Windows gets
+ * Arial Narrow where Office installed it, Android gets Roboto Condensed, and
+ * anything left gets Arial. All of them have a real heavy cut, so
+ * `displayWeight` never gets drawn as a faked bold.
+ *
+ * Text is Georgia, everywhere but Android, which draws Noto Serif.
  */
 export const font = {
-  display: `Anton, "Arial Narrow", "Helvetica Neue Condensed", Impact, sans-serif`,
-  serif: `"Source Serif 4", Georgia, "Times New Roman", serif`,
+  display: `"Avenir Next Condensed", "Arial Narrow", "sans-serif-condensed", Arial, sans-serif`,
+  serif: `Georgia, "Times New Roman", serif`,
 } as const;
+
+/** Avenir Next Condensed Heavy. */
+export const displayWeight = 800;
 
 export type ColorToken = keyof typeof color;

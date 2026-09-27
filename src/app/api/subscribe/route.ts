@@ -1,6 +1,7 @@
 import { db } from "@/db/supabase";
 import { renderConfirmEmail } from "@/email/confirm";
 import { resendRelay } from "@/email/relay";
+import { signupEmailCookie } from "@/content/site";
 
 /**
  * The signup form posts here. Step one of double opt-in: record the address as
@@ -12,6 +13,21 @@ import { resendRelay } from "@/email/relay";
 export async function POST(request: Request) {
   const back = (query: string) =>
     Response.redirect(new URL(`/${query}`, request.url), 303);
+
+  // "Check your inbox" names the address it went to, so a typo like
+  // gmail.con is caught on the spot rather than by a silent inbox. A short
+  // cookie rather than the query string keeps the address out of browser
+  // history and request logs.
+  const sent = () => {
+    const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
+    return new Response(null, {
+      status: 303,
+      headers: {
+        Location: new URL("/?sent=1", request.url).toString(),
+        "Set-Cookie": `${signupEmailCookie}=${encodeURIComponent(email)}; Path=/; Max-Age=600; HttpOnly; SameSite=Lax${secure}`,
+      },
+    });
+  };
 
   const form = await request.formData();
   const email = String(form.get("email") ?? "").trim();
@@ -42,7 +58,7 @@ export async function POST(request: Request) {
     // same "check your inbox" as everyone else: the page never reveals who is
     // already on the list.
     if (row.status === "confirmed" || row.status === "bounced") {
-      return back("?sent=1");
+      return sent();
     }
 
     // Someone who unsubscribed and signs up again goes back through opt-in.
@@ -69,7 +85,7 @@ export async function POST(request: Request) {
     });
     await relay.send({ to: email, ...message });
 
-    return back("?sent=1");
+    return sent();
   } catch (error) {
     console.error("subscribe failed:", error);
     return back("?error=1");

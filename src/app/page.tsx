@@ -1,4 +1,7 @@
+import { cookies } from "next/headers";
 import { Signup, type SignupState } from "@/components/site/Signup";
+import { latestIssue } from "@/content/issues";
+import { signupEmailCookie } from "@/content/site";
 
 /**
  * Home is the signup form. This is the link that gets handed around.
@@ -21,5 +24,8 @@ export default async function Home({
         : params.sent !== undefined
           ? "sent"
           : "form";
-  return <Signup state={state} />;
+  // Set by /api/subscribe so "check your email" can name the address.
+  const email =
+    state === "sent" ? (await cookies()).get(signupEmailCookie)?.value : undefined;
+  return <Signup state={state} email={email} latest={latestIssue} />;
 }

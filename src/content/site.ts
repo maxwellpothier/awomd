@@ -8,11 +8,14 @@ export const site = {
   /** Replies land here via Namecheap forwarding (PLAN.md, Stack). */
   replyAddress: "max@awomd.com",
   /** The schedule, as shown next to the date in the reading pane. */
-  sendTime: "4:00 PM",
+  sendTime: "4pm",
 } as const;
 
 /** Where the signup form posts. Double opt-in starts there. */
 export const subscribeAction = "/api/subscribe";
+
+/** Carries the address from the form to "check your inbox", for ten minutes. */
+export const signupEmailCookie = "awomd_signup_email";
 
 /**
  * Mailto unsubscribe, the same stand-in the send command uses until

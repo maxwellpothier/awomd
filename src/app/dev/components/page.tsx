@@ -31,10 +31,10 @@ export default function ComponentsGallery() {
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-14">
-      <p className="font-display text-[11px] uppercase tracking-[0.22em] text-orange-deep">
+      <p className="font-display text-[11px] text-orange-deep">
         Dev only
       </p>
-      <h1 className="mt-3 font-display text-4xl uppercase leading-none">
+      <h1 className="mt-3 font-display text-4xl leading-none">
         Components
       </h1>
       <div className="mt-4 h-0.5 w-16 bg-orange" aria-hidden />
@@ -131,7 +131,7 @@ function Specimen({
 }) {
   return (
     <section className="mt-14 border-t border-cream-deep pt-6">
-      <h2 className="font-display text-[11px] uppercase tracking-[0.2em] text-ink-muted">
+      <h2 className="font-display text-[11px] text-ink-muted">
         {label}
       </h2>
       <div className="mt-6">{children}</div>

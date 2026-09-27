@@ -7,7 +7,7 @@
  */
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { color } from "../src/design/tokens.ts";
+import { color, displayWeight, font } from "../src/design/tokens.ts";
 
 const cssPath = fileURLToPath(
   new URL("../src/app/globals.css", import.meta.url),
@@ -44,6 +44,22 @@ for (const [key, expected] of Object.entries(color)) {
   }
 }
 
+// Font stacks are compared with whitespace collapsed: CSS wraps long ones.
+const squash = (value: string) => value.replace(/\s+/g, " ").trim();
+const type: Record<string, string> = {
+  display: font.display,
+  serif: font.serif,
+  "display-weight": String(displayWeight),
+};
+for (const [key, expected] of Object.entries(type)) {
+  const actual = declared.get(`type-${key}`);
+  if (actual === undefined) {
+    problems.push(`--type-${key} is missing from globals.css (tokens.ts has ${expected})`);
+  } else if (squash(actual) !== squash(expected)) {
+    problems.push(`--type-${key} is ${squash(actual)} in globals.css, ${expected} in tokens.ts`);
+  }
+}
+
 if (problems.length > 0) {
   console.error("check-tokens: design tokens have drifted\n");
   for (const problem of problems) console.error(`  ${problem}`);
@@ -51,4 +67,6 @@ if (problems.length > 0) {
   process.exit(1);
 }
 
-console.log(`check-tokens: ${Object.keys(color).length} colors match`);
+console.log(
+  `check-tokens: ${Object.keys(color).length} colors and ${Object.keys(type).length} type tokens match`,
+);

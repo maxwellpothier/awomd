@@ -103,8 +103,12 @@ Direction read from the logo (blocky extruded orange letters on navy):
   own — two navy footers stacked was the alternative.
 - **Navy body text**, not black.
 - **Orange is scarce**: pills, links, section-title accents.
-- **Heavy condensed display face** for section titles; readable serif or plain
-  sans for prose. Must look intentional when it degrades to system fonts.
+- **Installed fonts only, site and email alike** (chosen by Max 2026-09-26):
+  Avenir Next Condensed Heavy for headlines, Georgia for everything else.
+  Gmail and Outlook ignore webfonts, so a loaded face would only ever reach
+  Apple Mail readers. Each stack falls back to something close; who sees what
+  is in `docs/email-safe-fonts.md`. A custom face could come back later only as
+  images of the headlines.
 - **Cover art carries the color.** Everything else stays restrained.
 - **Texture** only on the site header and logo, never in email components.
 - **Dark mode handled explicitly**: `color-scheme` meta, tested on iPhone
@@ -112,16 +116,26 @@ Direction read from the logo (blocky extruded orange letters on navy):
 
 Design happens in code, in the components gallery. No Figma step.
 
+**Site chrome pass — 2026-09-26.** The first version read as generated: a
+tracked-caps eyebrow, a caps headline, an orange bar and a paragraph on every
+page, orange on every control, copy full of em dashes and slogans. Now: the
+display face appears once per page, as the H1; everything else, nav and
+buttons included, is in sentence case, set in Georgia (see type,
+above); no eyebrows or accent bars;
+primary buttons are navy, and orange is left to the header's Subscribe and the
+logo. No orange rule under the bar. Copy is first person and plain, in the voice
+of the issues. The homepage shows the top of the latest issue beside the form.
+The letter's own blocks were not part of this pass.
+
 **The website is an inbox — decided 2026-09-21.** One layout for every public
 page: a list of issues as message rows (sender, subject, preview line, date)
 beside a reading pane showing the selected issue. The pane shows the actual
 email render inline, not a web re-layout, so loading the homepage is the
 preview. Wide screens show both halves scrolling independently; a phone shows
 the list or the open message. Not a Gmail imitation: it uses the cream, navy,
-and orange system and none of anyone else's chrome. The one permitted
-difference from the inbox is type: the letter's named font stacks are mapped
-to the loaded webfonts in `globals.css`, because a mail client only has system
-fonts and the site does not have to pretend otherwise.
+and orange system and none of anyone else's chrome. Since the fonts are
+installed ones, the site draws the letter exactly as the inbox does, type
+included.
 
 Colour and type tokens live in `src/design/tokens.ts` as literal strings, because
 email HTML carries inline styles and cannot read CSS custom properties. Tailwind

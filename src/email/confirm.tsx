@@ -10,7 +10,7 @@ import {
   Text,
   render,
 } from "@react-email/components";
-import { color, font } from "@/design/tokens";
+import { color, displayWeight, font } from "@/design/tokens";
 import { site } from "@/content/site";
 
 interface ConfirmEmailProps {
@@ -31,7 +31,7 @@ function ConfirmEmail({ baseUrl, confirmUrl }: ConfirmEmailProps) {
         <meta name="color-scheme" content="light only" />
         <meta name="supported-color-schemes" content="light only" />
       </Head>
-      <Preview>One click and you&rsquo;re on the list.</Preview>
+      <Preview>Confirm your email to start getting it on Sundays.</Preview>
       <Body
         style={{
           margin: 0,
@@ -72,14 +72,13 @@ function ConfirmEmail({ baseUrl, confirmUrl }: ConfirmEmailProps) {
               style={{
                 margin: 0,
                 fontFamily: font.display,
+                fontWeight: displayWeight,
                 fontSize: "30px",
-                lineHeight: "33px",
-                letterSpacing: "0.5px",
-                textTransform: "uppercase",
+                lineHeight: "36px",
                 color: color.ink,
               }}
             >
-              Confirm your subscription
+              Confirm your email
             </Text>
             <Text
               style={{
@@ -89,25 +88,24 @@ function ConfirmEmail({ baseUrl, confirmUrl }: ConfirmEmailProps) {
                 color: color.ink,
               }}
             >
-              Someone — hopefully you — asked to get {site.name}, a weekly
-              letter about the music on my desk, every Sunday at {site.sendTime}.
-              Click below and you&rsquo;re on the list.
+              Thanks for signing up for {site.name}. Click the button below
+              and the next issue will land in your inbox on Sunday at{" "}
+              {site.sendTime}.
             </Text>
             <Button
               href={confirmUrl}
               style={{
                 marginTop: "22px",
                 padding: "14px 24px",
-                backgroundColor: color.orange,
-                color: color.navy,
-                fontFamily: font.display,
-                fontSize: "14px",
-                letterSpacing: "2.5px",
-                textTransform: "uppercase",
+                backgroundColor: color.navy,
+                color: color.cream,
+                fontFamily: font.serif,
+                fontSize: "17px",
+                fontWeight: 600,
                 textDecoration: "none",
               }}
             >
-              Yes, sign me up
+              Confirm my email
             </Button>
             <Text
               style={{
@@ -117,8 +115,8 @@ function ConfirmEmail({ baseUrl, confirmUrl }: ConfirmEmailProps) {
                 color: color.inkMuted,
               }}
             >
-              If you didn&rsquo;t ask for this, ignore it — nothing else will
-              arrive. Questions? Just reply.
+              If you didn&rsquo;t sign up, you can ignore this and you
+              won&rsquo;t hear from me again.
             </Text>
           </Section>
         </Container>
@@ -133,5 +131,5 @@ export async function renderConfirmEmail(props: ConfirmEmailProps) {
     render(document),
     render(document, { plainText: true }),
   ]);
-  return { subject: `Confirm your subscription to ${site.name}`, html, text };
+  return { subject: `Confirm your email for ${site.name}`, html, text };
 }

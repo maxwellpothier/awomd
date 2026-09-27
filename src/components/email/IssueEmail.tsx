@@ -10,7 +10,7 @@ import {
   Text,
 } from "@react-email/components";
 import type { ReactNode } from "react";
-import { color, font } from "@/design/tokens";
+import { color, displayWeight, font } from "@/design/tokens";
 
 export interface IssueLetterProps {
   title: string;
@@ -87,10 +87,9 @@ export function IssueLetter({
         <Text
           style={{
             margin: 0,
-            fontFamily: font.display,
-            fontSize: "11px",
-            letterSpacing: "1.8px",
-            textTransform: "uppercase",
+            fontFamily: font.serif,
+            fontSize: "14px",
+            lineHeight: "20px",
             color: color.orangeDeep,
           }}
         >
@@ -100,10 +99,9 @@ export function IssueLetter({
           style={{
             margin: "10px 0 0",
             fontFamily: font.display,
+            fontWeight: displayWeight,
             fontSize: "30px",
-            lineHeight: "33px",
-            letterSpacing: "0.5px",
-            textTransform: "uppercase",
+            lineHeight: "36px",
             color: color.ink,
           }}
         >
@@ -131,16 +129,13 @@ export function IssueLetter({
             color: color.cream,
           }}
         >
-          Just hit reply — I read everything, and recommendations back are the
-          whole point.
+          Got something I should listen to? Reply and tell me.
         </Text>
         <Text
           style={{
             margin: "14px 0 0",
-            fontFamily: font.display,
-            fontSize: "11px",
-            letterSpacing: "1.4px",
-            textTransform: "uppercase",
+            fontFamily: font.serif,
+            fontSize: "14px",
           }}
         >
           <Link href={permalink} style={{ color: color.cream }}>
