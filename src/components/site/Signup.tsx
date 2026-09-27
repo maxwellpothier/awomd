@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { issueDateLabel, type IssueMeta } from "@/content/issues";
 import { site } from "@/content/site";
+import { paperCore, tear } from "@/design/tear";
 import { SignupForm } from "./SignupForm";
 
 /** Which step of double opt-in the visitor is on. Driven by the query string. */
@@ -171,30 +173,76 @@ function Failed() {
   );
 }
 
+/** The card's torn bottom edge, as a clip-path. Its own seed, not the masthead's. */
+const cardEdge = (() => {
+  const edge = tear(1987, (strength, random) => (random() - 0.5) * 4 * strength, 1.7).map(
+    ({ t, y }) => `${(t * 100).toFixed(3)}% calc(100% - 7px + ${(y * 0.8).toFixed(2)}px)`,
+  );
+  return `polygon(0 0, 100% 0, ${edge.join(", ")})`;
+})();
+
 /**
- * The latest issue as a card: issue line, title, preview. Nothing before the
- * first send.
+ * Where each cover lies behind the card, as it would on a desk: tucked under
+ * the sheet's top edge, peeking out, each at its own angle. On hover they
+ * slide out a little further.
+ */
+const coverSpots = [
+  "right-2 top-0 w-[150px] rotate-[8deg] group-hover:-translate-y-3 group-hover:rotate-[11deg]",
+  "right-[128px] top-4 w-[136px] -rotate-[4deg] group-hover:-translate-y-2 group-hover:-rotate-[7deg]",
+  "left-1 top-8 w-[124px] -rotate-[12deg] group-hover:-translate-y-2 group-hover:-rotate-[15deg]",
+];
+
+/**
+ * The latest issue, as a sheet of paper on the desk: slightly askew, torn
+ * along the bottom like the letter's own dividers, with a few of its records
+ * tucked under it. Hovering straightens the sheet. Nothing before the first
+ * send.
  */
 function LatestIssue({ latest }: { latest?: IssueMeta }) {
   if (!latest) return null;
+  const covers = (latest.covers ?? []).slice(0, coverSpots.length);
 
   return (
-    <aside aria-label="Latest issue" className="w-full max-w-[400px]">
-      <Link href={`/issues/${latest.slug}`} className="group block">
-        <div className="overflow-hidden bg-cream shadow-[0_1px_3px_rgba(15,19,30,0.10),0_12px_32px_-12px_rgba(15,19,30,0.25)]">
-          <div className="h-1 bg-orange" aria-hidden />
-          <div className="px-6 pb-7 pt-6">
+    <aside aria-label="Latest issue" className="mt-6 w-full max-w-[400px] lg:mt-0">
+      {/* On a phone the card falls under the form; the label keeps it from
+          reading as part of the signup. Beside the form it needs none. */}
+      <div className="mb-5 flex items-center gap-4 lg:hidden">
+        <h2 className="text-[19px] italic">Past issues</h2>
+        <span aria-hidden className="h-px flex-1 bg-ink/20" />
+      </div>
+      <Link href={`/issues/${latest.slug}`} className="group relative block pt-24">
+        {covers.map((src, i) => (
+          <Image
+            key={src}
+            src={src}
+            alt=""
+            width={300}
+            height={300}
+            sizes="150px"
+            className={`absolute aspect-square object-cover shadow-[0_2px_8px_rgba(15,19,30,0.28)] motion-safe:transition-transform motion-safe:duration-300 ${coverSpots[i]}`}
+          />
+        ))}
+        {/* The shadow is a filter on this wrapper: clip-path cuts a
+            box-shadow off, and a filter follows the tear. */}
+        <div className="relative -rotate-[1.5deg] drop-shadow-[0_3px_6px_rgba(15,19,30,0.22)] motion-safe:transition-transform motion-safe:duration-300 group-hover:rotate-0 group-hover:-translate-y-1">
+          <div
+            className="px-7 pb-9 pt-7"
+            style={{ background: paperCore, clipPath: cardEdge }}
+          >
             <p className="text-sm text-ink-muted">
               Issue {latest.number} · {issueDateLabel(latest.date)}
             </p>
-            <p className="mt-2 font-display text-[28px] leading-[1.15]">
+            <p className="mt-2 text-balance font-display text-[30px] leading-[1.1]">
               {latest.title}
             </p>
             <p className="mt-3 line-clamp-3 text-[15px] leading-6 text-ink-muted">
               {latest.preview}
             </p>
-            <p className="mt-4 text-[15px] font-medium text-orange-deep group-hover:underline">
+            <p className="mt-5 text-[15px] font-medium underline decoration-ink/30 underline-offset-[3px] group-hover:decoration-ink">
               Read this issue
+              <span aria-hidden className="ml-1.5 inline-block motion-safe:transition-transform group-hover:translate-x-1">
+                →
+              </span>
             </p>
           </div>
         </div>

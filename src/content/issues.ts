@@ -18,6 +18,12 @@ export interface IssueMeta {
   date: string;
   /** Inbox preview line, and the meta description on the web. */
   preview: string;
+  /**
+   * Three of the issue's covers, fanned out behind its card on the homepage,
+   * the first the most visible. Pick for colour: the card has little else.
+   * Paths under /public.
+   */
+  covers?: string[];
 }
 
 /** Newest first. */
@@ -29,6 +35,11 @@ export const issues: IssueMeta[] = [
     date: "2026-09-27",
     preview:
       "Two years ago I'd have told you Gen Z was in a music drought. Now it's most of what excites me. Lucy Bedroque, mary in the junkyard, and a few tracks.",
+    covers: [
+      "/covers/the-avalanches-far-away.jpg",
+      "/covers/lucy-bedroque-unmusique.jpg",
+      "/covers/mary-in-the-junkyard-role-model-hermit.jpg",
+    ],
   },
 ];
 
