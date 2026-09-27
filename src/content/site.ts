@@ -16,7 +16,8 @@ export const subscribeAction = "/api/subscribe";
 export const signupEmailCookie = "awomd_signup_email";
 
 /**
- * Mailto unsubscribe, the same stand-in the send command uses until
- * per-recipient tokens exist. See PLAN.md, "Standing in for deferred pieces".
+ * Where the letter's Unsubscribe button goes on the site, where there is no
+ * reader to take off: the page that explains the way off. In a sent email
+ * it carries the reader's own token instead (the send and the email route).
  */
-export const unsubscribeHref = `mailto:${site.replyAddress}?subject=unsubscribe`;
+export const unsubscribeHref = "/unsubscribe";

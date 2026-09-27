@@ -21,15 +21,14 @@ export async function GET(
 
   const url = new URL(request.url);
   const baseUrl = process.env.SITE_URL ?? url.origin;
-  const rendered = await renderIssueEmail({
-    slug,
-    baseUrl,
-    // The same URL for every recipient, because there are no per-recipient
-    // tokens until the subscribers table lands. The page it points at explains
-    // how to get off the list; it does not pretend to have done it. When tokens
-    // arrive this gains a `?token=` and nothing else here changes.
-    unsubscribeUrl: `${baseUrl}/unsubscribe`,
-  });
+  // The send fetches one render per recipient, passing their unsubscribe
+  // token, so the footer button takes that reader off in one click. Without
+  // one (a preview) it goes to /unsubscribe, which explains the way off.
+  const token = url.searchParams.get("token");
+  const unsubscribeUrl = token
+    ? `${baseUrl}/api/unsubscribe?token=${encodeURIComponent(token)}`
+    : `${baseUrl}/unsubscribe`;
+  const rendered = await renderIssueEmail({ slug, baseUrl, unsubscribeUrl });
 
   const wantsText = url.searchParams.get("text") !== null;
   return new Response(wantsText ? rendered.text : rendered.html, {
@@ -37,6 +36,9 @@ export async function GET(
     // has a "·" in it. The send command reads metadata from the registry
     // directly rather than round-tripping it through a header.
     headers: {
+      // The same URL goes in the message's List-Unsubscribe header, and the
+      // send has no other way to know the public origin it was built with.
+      "x-unsubscribe-url": unsubscribeUrl,
       "content-type": wantsText
         ? "text/plain; charset=utf-8"
         : "text/html; charset=utf-8",

@@ -1,0 +1,85 @@
+# Merging a new issue into main sends it to the list.
+#
+# "New" means its entry appeared in src/content/issues.ts in this push
+# (scripts/new-issues.mts). Registering an issue is what publishes it on the
+# site, so it is what sends it; editing one already registered sends nothing.
+#
+# The send renders from the live site, so this waits until Vercel has
+# deployed the merge and the issue answers at awomd.com, then sends. The
+# `sends` table keeps it to one email per reader: if a run stops partway,
+# re-running this job finishes it.
+#
+# Self-sends stay by hand, before merging: npm run send -- --issue <slug> --to me
+
+name: Send new issue
+
+on:
+  push:
+    branches: [main]
+    paths: [src/content/issues.ts]
+
+# One send at a time, and never cancel one partway.
+concurrency:
+  group: send-issue
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SEND_ORIGIN: https://awomd.com
+      SEND_FROM: ${{ secrets.SEND_FROM }}
+      SEND_REPLY_TO: ${{ secrets.SEND_REPLY_TO }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Find the issues this push added
+        id: new
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          slugs=$(node scripts/new-issues.mts "$BEFORE" "$AFTER" | tr '\n' ' ')
+          echo "New issues: ${slugs:-none}"
+          echo "slugs=$slugs" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for them on awomd.com
+        if: steps.new.outputs.slugs != ''
+        env:
+          SLUGS: ${{ steps.new.outputs.slugs }}
+        run: |
+          for slug in $SLUGS; do
+            # Up to 20 minutes for Vercel to build and go live.
+            for attempt in $(seq 1 60); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' "$SEND_ORIGIN/issues/$slug/email")
+              if [ "$code" = 200 ]; then echo "$slug is live"; continue 2; fi
+              sleep 20
+            done
+            echo "::error::$slug never went live at $SEND_ORIGIN"
+            exit 1
+          done
+
+      - name: Send to the list
+        if: steps.new.outputs.slugs != ''
+        env:
+          SLUGS: ${{ steps.new.outputs.slugs }}
+        run: |
+          for slug in $SLUGS; do
+            node scripts/send.mts --issue "$slug" --to list
+          done

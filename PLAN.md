@@ -122,6 +122,14 @@ Direction read from the logo (blocky extruded orange letters on navy):
   in the same tear (`src/design/tear.ts`). The site clips to it; email can't
   clip, so it is baked into `public/brand/email-banner.png` over transparency
   (`npm run banner`), which replaced the orange rule under the banner.
+  Later the same day the letter picked the tear up twice more, both as
+  images over transparency: `<Divider tear />` is the sheet above torn and
+  laid over the next, full width, for the big turns in an issue
+  (`npm run divider`); the footer is a navy sheet torn along its top and laid
+  on the letter (`npm run footer`). A full-width tear needs the gutters off
+  the letter, so the MDX `wrapper` pads the body and cuts it into sheets at
+  each tear. The footer carries the sign-off ("That's the desk this week…"),
+  an outlined Unsubscribe button, and Read in browser.
 - **Dark mode handled explicitly**: `color-scheme` meta, tested on iPhone
   Apple Mail and Gmail in dark mode before the first send.
 
@@ -135,7 +143,10 @@ buttons included, is in sentence case, set in Georgia (see type,
 above); no eyebrows or accent bars;
 primary buttons are navy, and orange is left to the header's Subscribe and the
 logo. No orange rule under the bar. Copy is first person and plain, in the voice
-of the issues. The homepage shows the top of the latest issue beside the form.
+of the issues. The homepage shows the latest issue beside the form, as a sheet of paper on
+the desk: askew, torn along the bottom, with three of its covers (the issue's
+`covers`, picked for colour) tucked under it; "Past issues" labels it on a
+phone, where it falls below the form.
 The letter's own blocks were not part of this pass.
 
 **The website is an inbox — decided 2026-09-21.** One layout for every public
@@ -165,17 +176,27 @@ the `?format=email` query param originally sketched. One compilation path, so wh
 the site shows is literally what gets sent rather than a parallel implementation that drifts.
 Decided 2026-09-19; the alternative was compiling MDX separately in the script.
 
-A command (not cron, not a button, for now):
+**Merging a new issue into main sends it — decided 2026-09-27**, replacing
+"a command, not cron, not a button". `.github/workflows/send-issue.yml` runs on
+a push to main that adds an entry to `src/content/issues.ts`, waits for the
+issue to answer at awomd.com (Vercel has deployed it), and sends it to every
+confirmed subscriber. Registering an issue publishes it and sends it; editing
+one already registered sends nothing. Sent as soon as it is live, so the merge
+time is the send time: merge at 4pm Sunday. GitHub Actions holds the relay and
+Supabase keys as repository secrets.
+
+The command is still there, for self-sends and for finishing by hand:
 
 ```
-npm run send -- --issue 2026-09-27 --to me      # renders, sends to Max only
-npm run send -- --issue 2026-09-27 --to list    # sends to all confirmed subscribers
+npm run send -- --issue 2026-09-27 --to me      # renders, sends to Max only, records nothing
+npm run send -- --issue 2026-09-27 --to list    # what the workflow runs
 ```
 
-- Self-send is a required first step. Read it on a phone in Gmail and Apple
-  Mail before sending to the list.
+- Self-send is a required first step, and stays by hand: Max asks for one
+  before merging, and reads it on a phone in Gmail and Apple Mail.
 - The `sends` table makes it idempotent: a recipient can't get the same issue
-  twice, and a half-failed send resumes.
+  twice, and a half-failed send resumes (re-run the job). Each row is claimed
+  before its email goes, so two runs at once can't double-send.
 - Every email carries `List-Unsubscribe` and `List-Unsubscribe-Post` headers
   for one-click unsubscribe in Gmail/Apple Mail.
 - Footer unsubscribe link works on first click, no login, no confirmation page.
@@ -251,8 +272,8 @@ identity at `/issues`.
    so a third migration grants it read/write explicitly. Any new table needs
    the same grant. **Subscribe and confirm done 2026-09-23**: `/api/subscribe`
    records a pending row and emails a confirm link; `/subscribe/confirm`
-   moves pending to confirmed. Still to do: tokenised unsubscribe, and the send
-   reading from `subscribers` instead of `recipients.txt`.
+   moves pending to confirmed. **Tokenised unsubscribe, and the send reading
+   from `subscribers`, done 2026-09-27.**
 9. Send command with self-send and idempotent list send.
 10. Relay webhooks → events table.
 11. Write the first issue. Self-send. Test on phone in light and dark. Send.
@@ -262,21 +283,19 @@ identity at `/issues`.
 Built for the first issue under the 2026-09-20 descope. Each is a deliberate
 stand-in with the same guarantee as the real thing, not a shortcut:
 
-- **Recipients** are a gitignored `content/recipients.txt`, not a database.
-  Real addresses never enter version control.
-- **Idempotency** is a `.sends/<issue>.jsonl` ledger instead of the `sends`
-  table. Same property: nobody gets an issue twice, and a half-failed run
-  resumes on re-run.
-- **Unsubscribe** is `mailto:`-based, because per-recipient tokens need the
-  subscribers table wired into the send. Gmail and Apple Mail still show a
-  one-click button; they send mail instead of POSTing. The footer link goes to
-  `/unsubscribe`, one URL for everyone, which says to email Max rather than
-  pretending to act. Swap both to a tokenised HTTPS URL plus
-  `List-Unsubscribe-Post` when the send reads from Supabase; the footer URL
-  only gains `?token=`.
-- **Confirmed subscribers don't receive issues yet.** The form fills
-  `subscribers`, but the send still reads `recipients.txt`, so a new
-  confirmed reader has to be added there by hand until the send moves over.
+- ~~**Recipients** are a gitignored `content/recipients.txt`; **idempotency**
+  is a `.sends/<issue>.jsonl` ledger~~ — **retired 2026-09-27.** The send reads
+  confirmed rows from `subscribers` and records to `sends`. Both hand-listed
+  addresses were already confirmed there.
+- ~~**Unsubscribe** is `mailto:`-based~~ — **real since 2026-09-27.** The
+  send gives every recipient a `subscribers` row (hand-listed addresses are
+  added as confirmed, `source = 'hand-added'`), skips anyone unsubscribed or
+  bounced, and renders each email with that reader's token. The footer button
+  and the `List-Unsubscribe` header (plus `List-Unsubscribe-Post`) both hit
+  `/api/unsubscribe?token=`: GET from the button, off on the first click, then
+  `/unsubscribe` offers an undo, which also covers mail scanners following
+  links; POST from the inbox's own one-click button. The header keeps a
+  mailto alongside.
 - **Nothing rate-limits confirmation emails.** Anyone can make the form mail
   any address repeatedly. Fine at friends-and-family scale; add a
   `confirm_sent_at` throttle if it's ever abused.
