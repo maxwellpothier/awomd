@@ -88,6 +88,33 @@ body {
   margin: 0 -0.06em;
 }
 
+/* The signup field's send button (SignupForm). The arrow nudges forward on
+   hover; once the form is sent it stays where it is and spins until the next
+   page loads. */
+.send-arrow {
+  width: 22px;
+  height: 22px;
+  margin: auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: translate 220ms cubic-bezier(0.3, 0, 0.2, 1);
+}
+.send-button:hover .send-arrow {
+  translate: 2px 0;
+}
+.send-button[data-pending] .send-arrow {
+  translate: 0 0;
+  animation: send-spin 800ms linear infinite;
+}
+@keyframes send-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
 /* The letter: the email render, shown inline in the reading pane. Its inline
    font stacks are installed fonts, so the site draws them exactly as the
    inbox does and needs no mapping here. */

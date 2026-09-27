@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { issueDateLabel, type IssueMeta } from "@/content/issues";
-import { site, subscribeAction } from "@/content/site";
+import { site } from "@/content/site";
+import { SignupForm } from "./SignupForm";
 
 /** Which step of double opt-in the visitor is on. Driven by the query string. */
 export type SignupState = "form" | "sent" | "confirmed" | "error";
@@ -89,31 +90,7 @@ function Form() {
         favorite part is when someone writes back with something for me to hear.
       </Lede>
 
-      <form
-        action={subscribeAction}
-        method="post"
-        className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row"
-      >
-        <label className="sr-only" htmlFor="signup-email">
-          Email address
-        </label>
-        <input
-          id="signup-email"
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          inputMode="email"
-          placeholder="Your email address"
-          className="min-w-0 flex-1 rounded-[3px] border border-ink/20 bg-white/60 px-4 py-3 text-[17px] text-ink placeholder:text-ink-muted/70 focus:border-navy focus:outline-none focus:ring-2 focus:ring-navy/15"
-        />
-        <button
-          type="submit"
-          className="rounded-[3px] bg-navy px-6 py-3 text-[17px] font-medium text-cream transition-colors hover:bg-navy-soft"
-        >
-          Subscribe
-        </button>
-      </form>
+      <SignupForm />
     </>
   );
 }
