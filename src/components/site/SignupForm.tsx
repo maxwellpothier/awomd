@@ -8,14 +8,26 @@ const complete = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * How messy the stack under the field is (`.signup-form` in globals.css), from
- * what's typed: 1 when empty, tidier with each character, and square (0) once
- * the address looks complete. Never quite square before that, so the snap is
- * the reward for finishing.
+ * what's typed: 1 when empty, 0 when square. The tidying is shared across the
+ * address's three parts, so no one keystroke does most of it: the name before
+ * the @ tidies it up to 40% of the way over ten characters, the domain up to
+ * 35% more over five, and the ending after the last dot whatever is left over
+ * three, so ".com" squares it a letter at a time rather than all on the "c",
+ * however short the rest was.
  */
 function mess(value: string) {
   const typed = value.trim();
-  if (complete.test(typed)) return 0;
-  return 1 - Math.min(typed.length / 20, 0.8);
+  const at = typed.indexOf("@");
+  const name = at === -1 ? typed : typed.slice(0, at);
+  const host = at === -1 ? "" : typed.slice(at + 1);
+  const dot = host.lastIndexOf(".");
+  const domain = dot === -1 ? host : host.slice(0, dot);
+  const ending = dot === -1 ? "" : host.slice(dot + 1);
+
+  const share = (length: number, over: number, weight: number) =>
+    Math.min(length / over, 1) * weight;
+  const before = share(name.length, 10, 0.4) + share(domain.length, 5, 0.35);
+  return (1 - before) * (1 - Math.min(ending.length / 3, 1));
 }
 
 /**
@@ -76,6 +88,14 @@ export function SignupForm() {
             onInput={(event) =>
               form.current?.style.setProperty("--mess", String(mess(event.currentTarget.value)))
             }
+            // A two-letter ending (.co, .io) stops a step short of square
+            // while typing, in case it's the start of .com. Leaving the field
+            // with a complete address, as pressing the button does, squares it.
+            onBlur={(event) => {
+              if (complete.test(event.currentTarget.value.trim())) {
+                form.current?.style.setProperty("--mess", "0");
+              }
+            }}
             className="signup-input h-[60px] w-full rounded-[14px] pl-5 pr-16 text-[17px] text-ink placeholder:text-ink-muted/70 focus:outline-none"
           />
           <button
