@@ -183,7 +183,9 @@ issue to answer at awomd.com (Vercel has deployed it), and sends it to every
 confirmed subscriber. Registering an issue publishes it and sends it; editing
 one already registered sends nothing. Sent as soon as it is live, so the merge
 time is the send time: merge at 4pm Sunday. GitHub Actions holds the relay and
-Supabase keys as repository secrets.
+Supabase keys as repository secrets. It only runs while the repository
+variable `AUTO_SEND` is `true`; issue 001 went out by hand, merged first so
+its images and unsubscribe links were live before anyone opened it.
 
 The command is still there, for self-sends and for finishing by hand:
 
