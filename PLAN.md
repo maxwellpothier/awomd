@@ -147,6 +147,11 @@ of the issues. The homepage shows the latest issue beside the form, as a sheet o
 the desk: askew, torn along the bottom, with three of its covers (the issue's
 `covers`, picked for colour) tucked under it; "Past issues" labels it on a
 phone, where it falls below the form.
+Since 2026-10-05 the sheet is the top of a pile: up to four earlier issues
+lie under it, each a smaller torn sheet at its own angle showing its number,
+title and first cover, and past four the pile ends in a link to `/issues`.
+Before that the homepage showed only the latest, so each new issue made the
+last one disappear from it.
 The letter's own blocks were not part of this pass.
 
 **The website is an inbox — decided 2026-09-21.** One layout for every public
