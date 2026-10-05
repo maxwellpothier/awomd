@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { Signup, type SignupState } from "@/components/site/Signup";
-import { latestIssue } from "@/content/issues";
+import { issues } from "@/content/issues";
 import { signupEmailCookie } from "@/content/site";
 
 /**
@@ -27,5 +27,5 @@ export default async function Home({
   // Set by /api/subscribe so "check your email" can name the address.
   const email =
     state === "sent" ? (await cookies()).get(signupEmailCookie)?.value : undefined;
-  return <Signup state={state} email={email} latest={latestIssue} />;
+  return <Signup state={state} email={email} issues={issues} />;
 }

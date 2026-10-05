@@ -29,6 +29,19 @@ export interface IssueMeta {
 /** Newest first. */
 export const issues: IssueMeta[] = [
   {
+    slug: "2026-10-04",
+    number: "002",
+    title: "There Are No Wrong Keys",
+    date: "2026-10-04",
+    preview:
+      "I started training muay thai a few weeks ago, and it sent me back to jazz. Thelonious Monk alone in San Francisco, Yo La Tengo at 20, and a few more songs.",
+    covers: [
+      "/covers/yo-la-tengo-i-am-not-afraid-of-you.jpg",
+      "/covers/thelonious-monk-thelonious-alone-in-san-francisco.jpg",
+      "/covers/natalie-merchant-san-andreas-fault.jpg",
+    ],
+  },
+  {
     slug: "2026-09-27",
     number: "001",
     title: "The Gen Z Kids Are Alright",
