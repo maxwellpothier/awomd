@@ -62,6 +62,6 @@ export async function renderIssueEmail({
   return {
     html,
     text,
-    subject: `${meta.title} · Issue ${meta.number}`,
+    subject: meta.title,
   };
 }

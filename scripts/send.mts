@@ -138,7 +138,7 @@ const relay: Relay = dryRun
     });
 
 const { queue, total } = await recipients();
-const subject = `${meta.title} · Issue ${meta.number}`;
+const subject = meta.title;
 const already = total - queue.length;
 
 console.log(`

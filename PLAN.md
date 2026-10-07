@@ -224,6 +224,15 @@ npm run send -- --issue 2026-09-27 --to list    # what the workflow runs
 
 Track as much as possible now; scale down later.
 
+**Open and click tracking go off — decided 2026-10-05**, to keep the letter
+out of Gmail's Promotions tab: click tracking rewrote all 30 to 40 links in an
+issue into redirects and open tracking added a pixel, and no personal email has
+either. Unproven, so it is being tested against fresh Gmail seed accounts.
+Replies are the signal now. The setting is on the domain in Resend
+(Configuration); the notes below describe what is there to turn back on.
+The subject lost its `· Issue 002` the same day, for the same reason: it is
+the issue's title alone.
+
 - Click and open tracking run through **`links.awomd.com`** (CNAME to
   `links2.resend-dns.com`), so tracked links carry our domain rather than the
   relay's — better looking, and a mismatched link domain is a spam signal.

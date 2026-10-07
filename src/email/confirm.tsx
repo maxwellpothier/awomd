@@ -108,6 +108,18 @@ function ConfirmEmail({ baseUrl, confirmUrl }: ConfirmEmailProps) {
             <Text
               style={{
                 margin: "26px 0 0",
+                fontSize: "17px",
+                lineHeight: "27px",
+                color: color.ink,
+              }}
+            >
+              One favor: if an issue lands in Gmail&rsquo;s Promotions tab,
+              drag it to Primary and say yes when Gmail asks to do that for
+              future messages. Then it shows up with the rest of your mail.
+            </Text>
+            <Text
+              style={{
+                margin: "26px 0 0",
                 fontSize: "14px",
                 lineHeight: "22px",
                 color: color.inkMuted,
