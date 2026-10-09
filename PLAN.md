@@ -129,7 +129,9 @@ Direction read from the logo (blocky extruded orange letters on navy):
   on the letter (`npm run footer`). A full-width tear needs the gutters off
   the letter, so the MDX `wrapper` pads the body and cuts it into sheets at
   each tear. The footer carries the sign-off ("That's the desk this week…"),
-  an outlined Unsubscribe button, and Read in browser.
+  an outlined Unsubscribe button, Share on your story and Read in browser,
+  and "Forwarded this? Get it every Sunday at awomd.com" (the last two added
+  2026-10-09; see Spreading the word).
 - **Dark mode handled explicitly**: `color-scheme` meta, tested on iPhone
   Apple Mail and Gmail in dark mode before the first send.
 
@@ -214,8 +216,25 @@ npm run send -- --issue 2026-09-27 --to list    # what the workflow runs
 - **Double opt-in.** Form → confirmation email → confirm link → subscribed.
 - Subscribe form ships with the site; the first send can go to a hand-made list.
 - Each confirm emails Max at the reply address ("New subscriber: …", with the
-  running count). Bounces and spam complaints email him too (2026-10-09). On confirm rather than signup, so typos and no-shows stay
-  quiet. Added 2026-09-27.
+  running count, and since 2026-10-09 the `?ref` they came in on). Bounces
+  and spam complaints email him too (2026-10-09), and so do unsubscribes and
+  undos (2026-10-09), because a forwarded copy's button or a mail scanner
+  can take a reader off without their meaning to. On confirm rather than
+  signup, so typos and no-shows stay quiet. Added 2026-09-27.
+- **Confirming sends the latest issue — decided 2026-10-09.** Nobody who signs
+  up on a Monday waits six days to see what they signed up for: the confirm
+  link sends the latest issue straight away (`email/welcome.ts`), subject
+  "Welcome to A Week on My Desk", with a short note from Max above the banner.
+  The note carries the Promotions-to-Primary ask, moved out of the
+  confirmation email because this is the first issue a reader can drag, and
+  asks for a reply with one album they love (replies help the next issue
+  land in Primary). It is a real send: claimed in `sends` first, so the
+  Sunday send skips them and a bounce on it is matched. Preview it at
+  `/issues/<slug>/email?welcome=1`.
+- **`source`** is `site` for the form, `site:<ref>` when the visitor first
+  arrived on a `?ref=` link (`awomd.com/?ref=randys`), or `hand-added`. The
+  proxy (`src/proxy.ts`) keeps the first ref in a cookie for 30 days, so a
+  signup a few pages later still counts.
 - Tables: `subscribers` (email, status, tokens, timestamps), `sends`
   (subscriber, issue, sent_at, relay message id), `events` (subscriber, issue,
   type, link, timestamp — raw relay webhook events).
@@ -243,6 +262,30 @@ the issue's title alone.
 - Listen links carry `?i=<issue>&b=<block>` so link identity is ours regardless
   of relay.
 
+## Spreading the word
+
+Decided 2026-10-09, from a growth plan: before handing the link to anyone
+new, make sure every way it travels turns into a signup.
+
+- **Link previews.** A link to the site or an issue unfurls (iMessage,
+  Slack, Instagram DMs) as a card: the title on a torn sheet beside the
+  covers.
+- **Forwards.** The footer says "Forwarded this? Get it every Sunday at
+  awomd.com". The forwarded copy's Unsubscribe button is still the
+  forwarder's, so `/unsubscribe` names the address it took off (partly
+  hidden) and tells a friend who wasn't them how to put them back.
+- **Story images.** For each issue, one 1080 × 1920 image of the whole issue
+  and one per record, so a reader can post the issue or just the album that
+  got them. Instagram can't take a link along with an image, so Share copies
+  the issue's link (`?ref=story`) for a link sticker.
+- **The confirmed page** asks "Know someone who'd like it too?" with a share
+  button (`?ref=share`).
+- **Attribution.** Every outside link carries a `?ref` (`ig`, `randys`,
+  `story`, `forward`, `rss`…), which lands in `source`.
+- The images can't use the letter's installed fonts, so they draw in Roboto
+  Condensed ExtraBold (what Android shows for the headline stack) and Gelasio
+  (drawn to Georgia's metrics); see `assets/fonts/`.
+
 ## Website
 
 - `/` — the **signup page**: eyebrow, headline, one paragraph, the email
@@ -252,9 +295,16 @@ the issue's title alone.
   issue is open beside it. Empty until the first issue goes out, and says so,
   with a Subscribe button back to `/`.
 - `/issues/[slug]` — permalink, also the "read in browser" target.
+- `/issues/[slug]/share` — "Share on your story": the issue's story images
+  to pick from, each with a Share button (phones) or Download (desktop).
+  Linked from the letter's footer and the inbox's Share button.
+- `/issues/[slug]/story/[block]` — the story images themselves, made at build
+  time. `issue` for the whole issue, or a record's block id.
 - `/about`
 - `/subscribe/confirm`, `/unsubscribe` — token endpoints, with step 8.
 - `/dev/components` — gallery, dev only.
+- `/feed.xml` (RSS), `/sitemap.xml`, `/robots.txt`; every page has a link
+  preview image (`opengraph-image.tsx`, the site's and one per issue).
 
 **Signup is its own page, not part of the inbox — decided 2026-09-21.** For
 about an hour the signup was a message pinned to the top of the inbox, open by
@@ -319,9 +369,11 @@ stand-in with the same guarantee as the real thing, not a shortcut:
   `/unsubscribe` offers an undo, which also covers mail scanners following
   links; POST from the inbox's own one-click button. The header keeps a
   mailto alongside.
-- **Nothing rate-limits confirmation emails.** Anyone can make the form mail
-  any address repeatedly. Fine at friends-and-family scale; add a
-  `confirm_sent_at` throttle if it's ever abused.
+- ~~**Nothing rate-limits confirmation emails.**~~ — **throttled 2026-10-09**,
+  before the link goes anywhere public: one confirmation email per address
+  per ten minutes (`confirm_sent_at`), and a hidden field that only bots fill
+  in. Still nothing per IP; add it if a flood of distinct addresses ever
+  comes through.
 - **Cards are hand-entered** (artist, title, year, cover) rather than resolved.
   `ResolvedRecord` already has the shape the resolver will fill, so the change
   is how a card is populated, not how it renders.

@@ -1,6 +1,7 @@
 import { render } from "@react-email/components";
 import { createEmailComponents } from "@/components/blocks/email";
-import { IssueEmail } from "@/components/email/IssueEmail";
+import { IssueEmail, WelcomeNote } from "@/components/email/IssueEmail";
+import { site } from "@/content/site";
 import { findIssue, issueDateLabel, loadIssue } from "@/content/issues";
 
 export interface RenderIssueOptions {
@@ -12,6 +13,11 @@ export interface RenderIssueOptions {
    * per-recipient tokens need the subscribers table.
    */
   unsubscribeUrl: string;
+  /**
+   * The welcome version: the latest issue as a new subscriber gets it on
+   * confirming, with a note above the banner and its own subject.
+   */
+  welcome?: boolean;
 }
 
 export interface RenderedIssue {
@@ -32,6 +38,7 @@ export async function renderIssueEmail({
   slug,
   baseUrl,
   unsubscribeUrl,
+  welcome = false,
 }: RenderIssueOptions): Promise<RenderedIssue> {
   const meta = findIssue(slug);
   if (!meta) throw new Error(`Unknown issue: ${slug}`);
@@ -45,10 +52,15 @@ export async function renderIssueEmail({
       title={meta.title}
       dateLabel={issueDateLabel(meta.date)}
       issueNumber={meta.number}
-      preview={meta.preview}
+      preview={
+        welcome ? "Here's the latest issue, so you don't have to wait for Sunday." : meta.preview
+      }
       baseUrl={origin}
       permalink={`${origin}/issues/${meta.slug}`}
       unsubscribeUrl={unsubscribeUrl}
+      shareUrl={`${origin}/issues/${meta.slug}/share`}
+      subscribeUrl={`${origin}/?ref=forward`}
+      note={welcome ? <WelcomeNote /> : undefined}
     >
       <Issue components={components} />
     </IssueEmail>
@@ -62,6 +74,6 @@ export async function renderIssueEmail({
   return {
     html,
     text,
-    subject: meta.title,
+    subject: welcome ? `Welcome to ${site.name}` : meta.title,
   };
 }
