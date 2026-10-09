@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { issueDateLabel, type IssueMeta } from "@/content/issues";
 import { site } from "@/content/site";
 import { paperCore, tear } from "@/design/tear";
+import { ShareLink } from "./ShareLink";
 import { SignupForm } from "./SignupForm";
 
 /** Which step of double opt-in the visitor is on. Driven by the query string. */
@@ -138,23 +139,36 @@ function Sent({ email }: { email?: string }) {
   );
 }
 
+/**
+ * Confirming sends the latest issue straight away (`email/welcome.ts`), so
+ * this says so, then asks for the one thing someone who just signed up is
+ * most likely to do: pass it on.
+ */
 function Confirmed({ latest }: { latest?: IssueMeta }) {
   return (
     <>
       <Headline>You&rsquo;re on the list</Headline>
       <Lede>
-        The next issue goes out Sunday evening.
         {latest ? (
           <>
-            {" "}
-            If you can&rsquo;t wait,{" "}
+            I just sent you the latest issue, so you don&rsquo;t have to wait
+            for Sunday. It&rsquo;s also{" "}
             <Link href={`/issues/${latest.slug}`} className={textLink}>
-              the latest one is here
-            </Link>
-            .
+              right here
+            </Link>{" "}
+            if you&rsquo;d rather read it now.
           </>
-        ) : null}
+        ) : (
+          "The first issue goes out Sunday evening."
+        )}
       </Lede>
+      <Note>Know someone who&rsquo;d like it too?</Note>
+      <ShareLink
+        path="/?ref=share"
+        title={site.name}
+        text="Music worth passing along, every Sunday evening."
+        label="Send them the link"
+      />
     </>
   );
 }

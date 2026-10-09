@@ -41,6 +41,20 @@ export const pillColors = [
 ] as const;
 
 /**
+ * Which of `pillColors` a pill gets: picked from its text, so it is the same
+ * everywhere (the letter and its share images), then moved along one if it
+ * would match the pill before it.
+ */
+export function pillTint(pill: string, previous: number): number {
+  let hash = 0;
+  for (const char of pill.toLowerCase()) {
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  }
+  const index = hash % pillColors.length;
+  return index === previous ? (index + 1) % pillColors.length : index;
+}
+
+/**
  * Installed fonts only, on the site as well as in email: Gmail and Outlook
  * ignore webfonts, so a loaded face would be a different letter for half the
  * readers. docs/email-safe-fonts.md has who has what.

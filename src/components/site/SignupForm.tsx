@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { subscribeAction } from "@/content/site";
+import { honeypotField, subscribeAction } from "@/content/site";
 
 /** Looks like a whole address: something@something.something. */
 const complete = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -68,6 +68,12 @@ export function SignupForm() {
       aria-busy={pending}
       className="signup-form relative mt-7 sm:mt-9"
     >
+      {/* For bots only: off screen, out of the tab order, hidden from screen
+          readers. A person never fills it in; /api/subscribe drops any post
+          that does. */}
+      <div aria-hidden className="absolute -left-[9999px] top-0 h-px w-px overflow-hidden">
+        <input type="text" name={honeypotField} tabIndex={-1} autoComplete="off" defaultValue="" />
+      </div>
       <label className="sr-only" htmlFor="signup-email">
         Email address
       </label>
