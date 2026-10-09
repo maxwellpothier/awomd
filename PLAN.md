@@ -214,7 +214,7 @@ npm run send -- --issue 2026-09-27 --to list    # what the workflow runs
 - **Double opt-in.** Form → confirmation email → confirm link → subscribed.
 - Subscribe form ships with the site; the first send can go to a hand-made list.
 - Each confirm emails Max at the reply address ("New subscriber: …", with the
-  running count). On confirm rather than signup, so typos and no-shows stay
+  running count). Bounces and spam complaints email him too (2026-10-09). On confirm rather than signup, so typos and no-shows stay
   quiet. Added 2026-09-27.
 - Tables: `subscribers` (email, status, tokens, timestamps), `sends`
   (subscriber, issue, sent_at, relay message id), `events` (subscriber, issue,
@@ -291,7 +291,14 @@ identity at `/issues`.
    moves pending to confirmed. **Tokenised unsubscribe, and the send reading
    from `subscribers`, done 2026-09-27.**
 9. Send command with self-send and idempotent list send.
-10. Relay webhooks → events table.
+10. Relay webhooks → events table. **Done 2026-10-09**: Resend posts every
+    event to `/api/webhooks/relay`, signed with `RESEND_WEBHOOK_SECRET`, and
+    each lands raw in `events`, matched to its subscriber and issue by the
+    `sends.message_id`, or by address for mail that isn't an issue. A
+    permanent bounce (or Resend suppressing the address) marks the subscriber
+    `bounced`; a spam complaint unsubscribes them, since the address works and
+    they can come back. Either emails Max. Soft bounces, opens and clicks are
+    recorded and change nothing.
 11. Write the first issue. Self-send. Test on phone in light and dark. Send.
 
 ## Standing in for deferred pieces
