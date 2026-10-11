@@ -56,7 +56,6 @@ export async function renderIssueEmail({
         welcome ? "Here's the latest issue, so you don't have to wait for Sunday." : meta.preview
       }
       baseUrl={origin}
-      permalink={`${origin}/issues/${meta.slug}`}
       unsubscribeUrl={unsubscribeUrl}
       shareUrl={`${origin}/issues/${meta.slug}/share`}
       subscribeUrl={`${origin}/?ref=forward`}

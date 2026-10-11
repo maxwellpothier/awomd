@@ -19,8 +19,6 @@ export interface IssueLetterProps {
   issueNumber: string;
   /** Origin for the banner image. Empty string means "relative", for the site. */
   baseUrl: string;
-  /** Permalink for "read in browser". */
-  permalink: string;
   /** Replaced per recipient at send time. */
   unsubscribeUrl: string;
   /** The issue's story images, for "Share on your story". */
@@ -53,7 +51,6 @@ export function IssueLetter({
   dateLabel,
   issueNumber,
   baseUrl,
-  permalink,
   unsubscribeUrl,
   shareUrl,
   subscribeUrl,
@@ -199,10 +196,6 @@ export function IssueLetter({
         >
           <Link href={shareUrl} style={{ color: color.cream }}>
             Share on your story
-          </Link>
-          {"  ·  "}
-          <Link href={permalink} style={{ color: color.cream }}>
-            Read in browser
           </Link>
         </Text>
         {/* For whoever this was forwarded to. Its Unsubscribe button above

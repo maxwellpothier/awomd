@@ -30,7 +30,7 @@ export async function generateMetadata({
   };
 }
 
-/** The permalink, and the "read in browser" target: the inbox with this issue open. */
+/** The permalink: the inbox with this issue open. */
 export default async function IssuePage({
   params,
 }: {

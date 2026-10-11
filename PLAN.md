@@ -129,9 +129,9 @@ Direction read from the logo (blocky extruded orange letters on navy):
   on the letter (`npm run footer`). A full-width tear needs the gutters off
   the letter, so the MDX `wrapper` pads the body and cuts it into sheets at
   each tear. The footer carries the sign-off ("That's the desk this week…"),
-  an outlined Unsubscribe button, Share on your story and Read in browser,
-  and "Forwarded this? Get it every Sunday at awomd.com" (the last two added
-  2026-10-09; see Spreading the word).
+  an outlined Unsubscribe button, Share on your story, and "Forwarded this?
+  Get it every Sunday at awomd.com" (both added 2026-10-09; see Spreading
+  the word). Read in browser was dropped 2026-10-10: nobody needs it.
 - **Dark mode handled explicitly**: `color-scheme` meta, tested on iPhone
   Apple Mail and Gmail in dark mode before the first send.
 
@@ -294,7 +294,7 @@ new, make sure every way it travels turns into a signup.
 - `/issues` — the inbox. On a phone, the list; on a wide screen the latest
   issue is open beside it. Empty until the first issue goes out, and says so,
   with a Subscribe button back to `/`.
-- `/issues/[slug]` — permalink, also the "read in browser" target.
+- `/issues/[slug]` — permalink.
 - `/issues/[slug]/share` — "Share on your story": the issue's story images
   to pick from, each with a Share button (phones) or Download (desktop).
   Linked from the letter's footer and the inbox's Share button.

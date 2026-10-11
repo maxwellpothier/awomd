@@ -23,7 +23,6 @@ export async function Letter({ meta }: { meta: IssueMeta }) {
         dateLabel={issueDateLabel(meta.date)}
         issueNumber={meta.number}
         baseUrl=""
-        permalink={`/issues/${meta.slug}`}
         unsubscribeUrl={unsubscribeHref}
         shareUrl={`/issues/${meta.slug}/share`}
         subscribeUrl="/"
