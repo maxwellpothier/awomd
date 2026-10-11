@@ -29,6 +29,19 @@ export interface IssueMeta {
 /** Newest first. */
 export const issues: IssueMeta[] = [
   {
+    slug: "2026-10-11",
+    number: "003",
+    title: "Hear It in My Mind and Make It Real",
+    date: "2026-10-11",
+    preview:
+      "I Love My Computer came out last year, and I can't stop going back to it. Ninajirachi, Saint Etienne's Foxbase Alpha, and the weekly grab bag.",
+    covers: [
+      "/covers/ear-ne-plus-ultra.jpg",
+      "/covers/saint-etienne-foxbase-alpha.jpg",
+      "/covers/ninajirachi-i-love-my-computer.jpg",
+    ],
+  },
+  {
     slug: "2026-10-04",
     number: "002",
     title: "There Are No Wrong Keys",
