@@ -1,6 +1,7 @@
 import { after } from "next/server";
 import { db } from "@/db/supabase";
-import { notifyMax } from "@/email/notify";
+import { notifyMax, onTheList } from "@/email/notify";
+import { sendWelcome } from "@/email/welcome";
 
 /**
  * The link in the confirmation email. Step two of double opt-in: the token
@@ -25,11 +26,14 @@ export async function GET(request: Request) {
       .update({ status: "confirmed", confirmed_at: new Date().toISOString() })
       .eq("confirm_token", token)
       .eq("status", "pending")
-      .select("id, email");
+      .select("id, email, unsubscribe_token, source");
     if (error) throw error;
     if (confirmed.length > 0) {
-      // After the redirect, so the new subscriber never waits on it.
-      after(() => notifyNewSubscriber(confirmed[0].email));
+      const subscriber = confirmed[0];
+      const origin = (process.env.SITE_URL ?? new URL(request.url).origin).replace(/\/$/, "");
+      // After the redirect, so the new subscriber never waits on either.
+      after(() => sendWelcome(subscriber, origin));
+      after(() => notifyNewSubscriber(subscriber.email, subscriber.source));
       return back("?confirmed=1");
     }
 
@@ -48,14 +52,14 @@ export async function GET(request: Request) {
 }
 
 /**
- * Tells Max someone new is on the list. Only on confirm, not on signup, so
- * typos and people who never click don't count.
+ * Tells Max someone new is on the list, and which link brought them (the
+ * `?ref=` they arrived with, kept in `source`). Only on confirm, not on
+ * signup, so typos and people who never click don't count.
  */
-async function notifyNewSubscriber(email: string) {
-  const { count } = await db()
-    .from("subscribers")
-    .select("id", { count: "exact", head: true })
-    .eq("status", "confirmed");
-  const total = count === null ? "" : ` (${count} on the list)`;
-  await notifyMax(`New subscriber: ${email}`, `${email} just confirmed${total}.`);
+async function notifyNewSubscriber(email: string, source: string | null) {
+  const via = source ? `, via ${source}` : "";
+  await notifyMax(
+    `New subscriber: ${email}`,
+    `${email} just confirmed${via}${await onTheList()}.`,
+  );
 }

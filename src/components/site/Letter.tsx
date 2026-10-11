@@ -25,6 +25,8 @@ export async function Letter({ meta }: { meta: IssueMeta }) {
         baseUrl=""
         permalink={`/issues/${meta.slug}`}
         unsubscribeUrl={unsubscribeHref}
+        shareUrl={`/issues/${meta.slug}/share`}
+        subscribeUrl="/"
       >
         <Issue components={components} />
       </IssueLetter>

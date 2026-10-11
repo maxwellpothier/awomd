@@ -1,4 +1,5 @@
 import "server-only";
+import { db } from "@/db/supabase";
 import { resendRelay } from "@/email/relay";
 import { site } from "@/content/site";
 
@@ -22,6 +23,15 @@ export async function notifyMax(subject: string, line: string) {
   } catch (error) {
     console.error(`note to Max failed (${subject}):`, error);
   }
+}
+
+/** " (12 on the list)", to end a note with. Empty if the count fails. */
+export async function onTheList(): Promise<string> {
+  const { count } = await db()
+    .from("subscribers")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "confirmed");
+  return count === null ? "" : ` (${count} on the list)`;
 }
 
 function escapeHtml(value: string) {

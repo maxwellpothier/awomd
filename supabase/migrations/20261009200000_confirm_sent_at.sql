@@ -1,0 +1,12 @@
+-- When this address was last sent a confirmation email.
+--
+-- /api/subscribe sends at most one every ten minutes per address. Before
+-- this, anyone could make the form mail any address as often as they liked
+-- (PLAN.md, "Nothing rate-limits confirmation emails"), which was fine for
+-- friends and family and isn't once the link is posted in public: a stranger
+-- getting a pile of confirmation emails reports them as spam, and those
+-- reports count against awomd.com.
+--
+-- Null for every existing row, which reads as "never sent", so nobody is
+-- held back by it. The table grant to service_role covers the new column.
+alter table subscribers add column confirm_sent_at timestamptz;

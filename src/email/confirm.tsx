@@ -31,7 +31,7 @@ function ConfirmEmail({ baseUrl, confirmUrl }: ConfirmEmailProps) {
         <meta name="color-scheme" content="light only" />
         <meta name="supported-color-schemes" content="light only" />
       </Head>
-      <Preview>Confirm your email to start getting it on Sundays.</Preview>
+      <Preview>Confirm your email and the latest issue is on its way.</Preview>
       <Body
         style={{
           margin: 0,
@@ -88,7 +88,8 @@ function ConfirmEmail({ baseUrl, confirmUrl }: ConfirmEmailProps) {
               }}
             >
               Thanks for signing up for {site.name}. Click the button below
-              and the next issue will land in your inbox on Sunday evening.
+              and I&rsquo;ll send you the latest issue right away. After
+              that, a new one lands every Sunday evening.
             </Text>
             <Button
               href={confirmUrl}
@@ -105,18 +106,6 @@ function ConfirmEmail({ baseUrl, confirmUrl }: ConfirmEmailProps) {
             >
               Confirm my email
             </Button>
-            <Text
-              style={{
-                margin: "26px 0 0",
-                fontSize: "17px",
-                lineHeight: "27px",
-                color: color.ink,
-              }}
-            >
-              One favor: if an issue lands in Gmail&rsquo;s Promotions tab,
-              drag it to Primary and say yes when Gmail asks to do that for
-              future messages. Then it shows up with the rest of your mail.
-            </Text>
             <Text
               style={{
                 margin: "26px 0 0",

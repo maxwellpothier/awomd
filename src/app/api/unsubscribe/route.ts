@@ -1,4 +1,6 @@
+import { after } from "next/server";
 import { db } from "@/db/supabase";
+import { notifyMax, onTheList } from "@/email/notify";
 
 /**
  * Unsubscribe, by the token on the subscriber's row. The send puts it in
@@ -12,6 +14,10 @@ import { db } from "@/db/supabase";
  *   themselves, from the `List-Unsubscribe` header (RFC 8058). The client
  *   wants a 2xx, not a page.
  * - POST `undo=1`: the resubscribe button on /unsubscribe.
+ *
+ * Each change emails Max. An unsubscribe isn't always the reader's own: a
+ * friend tapping the button in a forwarded copy, or a work mail scanner
+ * following every link, takes the original reader off too.
  */
 export async function GET(request: Request) {
   const token = tokenFrom(request);
@@ -73,9 +79,19 @@ async function unsubscribe(token: string): Promise<boolean> {
     .update({ status: "unsubscribed", unsubscribed_at: new Date().toISOString() })
     .eq("unsubscribe_token", token)
     .in("status", ["pending", "confirmed"])
-    .select("id");
+    .select("email");
   if (error) throw error;
-  if (changed.length > 0) return true;
+  if (changed.length > 0) {
+    const { email } = changed[0];
+    after(async () =>
+      notifyMax(
+        `Unsubscribed: ${email}`,
+        `${email} unsubscribed${await onTheList()}. If that looks like a mistake ` +
+          "(a forwarded copy, a mail scanner), the page they landed on offers an undo.",
+      ),
+    );
+    return true;
+  }
 
   const { data: row, error: lookupError } = await subscribers
     .select("id")
@@ -97,9 +113,18 @@ async function resubscribe(token: string): Promise<boolean> {
     .eq("unsubscribe_token", token)
     .eq("status", "unsubscribed")
     .not("confirmed_at", "is", null)
-    .select("id");
+    .select("email");
   if (error) throw error;
-  if (changed.length > 0) return true;
+  if (changed.length > 0) {
+    const { email } = changed[0];
+    after(async () =>
+      notifyMax(
+        `Back on the list: ${email}`,
+        `${email} undid their unsubscribe${await onTheList()}.`,
+      ),
+    );
+    return true;
+  }
 
   // Pressed twice: already back on.
   const { data: row, error: lookupError } = await subscribers

@@ -9,8 +9,9 @@ import {
 } from "@react-email/components";
 import type { MDXComponents } from "mdx/types";
 import { Children, Fragment, isValidElement, type ReactNode } from "react";
-import { color, displayWeight, font, pillColors } from "@/design/tokens";
+import { color, displayWeight, font, pillColors, pillTint } from "@/design/tokens";
 import {
+  blockId,
   kindLabel,
   listenUrl,
   type CardProps,
@@ -34,29 +35,6 @@ import {
  * Colours come from `tokens.ts` as literals, which is the whole reason that
  * file exists.
  */
-
-function blockId(...parts: (string | undefined)[]): string {
-  return parts
-    .filter(Boolean)
-    .join("-")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 60);
-}
-
-/**
- * Which of `pillColors` a pill gets: picked from its text, so it is the same
- * everywhere, then moved along one if it would match the pill before it.
- */
-function pillTint(pill: string, previous: number): number {
-  let hash = 0;
-  for (const char of pill.toLowerCase()) {
-    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
-  }
-  const index = hash % pillColors.length;
-  return index === previous ? (index + 1) % pillColors.length : index;
-}
 
 const prose = {
   margin: "0 0 14px",

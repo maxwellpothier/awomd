@@ -105,6 +105,20 @@ export interface BlockLocation {
 }
 
 /**
+ * A block's id within its issue, from what it names: "lucy-bedroque-unmusique".
+ * Stamped on its listen links, and the address of its story image.
+ */
+export function blockId(...parts: (string | undefined)[]): string {
+  return parts
+    .filter(Boolean)
+    .join("-")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 60);
+}
+
+/**
  * Stamp a listen link with issue and block identity.
  *
  * Link identity is ours regardless of relay: the email provider rewrites the

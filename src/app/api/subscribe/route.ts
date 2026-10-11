@@ -1,7 +1,16 @@
+import { cookies } from "next/headers";
 import { db } from "@/db/supabase";
 import { renderConfirmEmail } from "@/email/confirm";
 import { resendRelay } from "@/email/relay";
-import { signupEmailCookie } from "@/content/site";
+import { cleanRef, honeypotField, refCookie, signupEmailCookie } from "@/content/site";
+
+/**
+ * How long one address waits between confirmation emails. Without it anyone
+ * could make the form mail a stranger over and over, and their spam reports
+ * would land on awomd.com. A real person who asks twice in a row still sees
+ * "check your email": the first one is still good.
+ */
+const confirmCooldownMinutes = 10;
 
 /**
  * The signup form posts here. Step one of double opt-in: record the address as
@@ -31,6 +40,11 @@ export async function POST(request: Request) {
 
   const form = await request.formData();
   const email = String(form.get("email") ?? "").trim();
+
+  // A field people never see (SignupForm). Anything in it was typed by a
+  // bot, which gets the same "check your email" as everyone and nothing else.
+  if (String(form.get(honeypotField) ?? "") !== "") return sent();
+
   // The input is type="email", so a browser has already checked it. This
   // only turns away hand-rolled posts.
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -40,16 +54,20 @@ export async function POST(request: Request) {
   try {
     const subscribers = db().from("subscribers");
 
+    // Where they came from, if they arrived on a `?ref=` link (src/proxy.ts).
+    const ref = cleanRef((await cookies()).get(refCookie)?.value);
+
     // Insert if new. A second signup for the same address, in any case, is a
-    // no-op here (citext + unique) rather than an error.
+    // no-op here (citext + unique) rather than an error, and keeps the source
+    // it first came in with.
     const inserted = await subscribers.upsert(
-      { email, source: "site" },
+      { email, source: ref ? `site:${ref}` : "site" },
       { onConflict: "email", ignoreDuplicates: true },
     );
     if (inserted.error) throw inserted.error;
 
     const { data: row, error } = await subscribers
-      .select("id, status, confirm_token")
+      .select("id, status, confirm_token, confirm_sent_at")
       .eq("email", email)
       .single();
     if (error) throw error;
@@ -69,21 +87,39 @@ export async function POST(request: Request) {
       if (reset.error) throw reset.error;
     }
 
-    const origin = (process.env.SITE_URL ?? new URL(request.url).origin).replace(
-      /\/$/,
-      "",
-    );
-    const message = await renderConfirmEmail({
-      baseUrl: origin,
-      confirmUrl: `${origin}/subscribe/confirm?token=${row.confirm_token}`,
-    });
+    // Claim this address's next confirmation email, in one statement so two
+    // posts at once can't both send. Nothing to claim means one went out in
+    // the last few minutes.
+    const cutoff = new Date(Date.now() - confirmCooldownMinutes * 60_000).toISOString();
+    const { data: claimed, error: claimError } = await subscribers
+      .update({ confirm_sent_at: new Date().toISOString() })
+      .eq("id", row.id)
+      .or(`confirm_sent_at.is.null,confirm_sent_at.lt."${cutoff}"`)
+      .select("id");
+    if (claimError) throw claimError;
+    if (claimed.length === 0) return sent();
 
-    const relay = resendRelay({
-      apiKey: required("RESEND_API_KEY"),
-      from: required("SEND_FROM"),
-      replyTo: process.env.SEND_REPLY_TO,
-    });
-    await relay.send({ to: email, ...message });
+    try {
+      const origin = (process.env.SITE_URL ?? new URL(request.url).origin).replace(
+        /\/$/,
+        "",
+      );
+      const message = await renderConfirmEmail({
+        baseUrl: origin,
+        confirmUrl: `${origin}/subscribe/confirm?token=${row.confirm_token}`,
+      });
+
+      const relay = resendRelay({
+        apiKey: required("RESEND_API_KEY"),
+        from: required("SEND_FROM"),
+        replyTo: process.env.SEND_REPLY_TO,
+      });
+      await relay.send({ to: email, ...message });
+    } catch (error) {
+      // Nothing went out, so a retry shouldn't have to wait out the cooldown.
+      await subscribers.update({ confirm_sent_at: row.confirm_sent_at }).eq("id", row.id);
+      throw error;
+    }
 
     return sent();
   } catch (error) {

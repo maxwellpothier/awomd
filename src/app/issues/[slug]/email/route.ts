@@ -8,7 +8,8 @@ import { renderIssueEmail } from "@/email/render";
  * makes "what you previewed is what was sent" true by construction rather
  * than by discipline.
  *
- * `?text=1` returns the plain-text alternative instead.
+ * `?text=1` returns the plain-text alternative instead, and `?welcome=1` the
+ * welcome version a new subscriber gets on confirming (`email/welcome.ts`).
  */
 export async function GET(
   request: Request,
@@ -28,7 +29,8 @@ export async function GET(
   const unsubscribeUrl = token
     ? `${baseUrl}/api/unsubscribe?token=${encodeURIComponent(token)}`
     : `${baseUrl}/unsubscribe`;
-  const rendered = await renderIssueEmail({ slug, baseUrl, unsubscribeUrl });
+  const welcome = url.searchParams.get("welcome") !== null;
+  const rendered = await renderIssueEmail({ slug, baseUrl, unsubscribeUrl, welcome });
 
   const wantsText = url.searchParams.get("text") !== null;
   return new Response(wantsText ? rendered.text : rendered.html, {

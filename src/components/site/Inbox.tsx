@@ -131,17 +131,23 @@ function Row({
   );
 }
 
-/** The mail-client header above a message: subject, sender, date, reply. */
+const headerButton =
+  "rounded-[3px] border border-ink/20 px-3.5 py-1.5 text-sm font-medium transition-colors hover:border-navy hover:bg-navy hover:text-cream";
+
+/** The mail-client header above a message: subject, sender, date, reply, share. */
 function MessageHeader({
   subject,
   suffix,
   dateLine,
   replySubject,
+  shareHref,
 }: {
   subject: string;
   suffix?: string;
   dateLine: string;
   replySubject: string;
+  /** The issue's story images. */
+  shareHref?: string;
 }) {
   return (
     <header className="mb-6">
@@ -177,12 +183,19 @@ function MessageHeader({
           </p>
           <p className="text-ink-muted">to you · {dateLine}</p>
         </div>
-        <a
-          href={`mailto:${site.replyAddress}?subject=${encodeURIComponent(replySubject)}`}
-          className="ml-auto flex-none rounded-[3px] border border-ink/20 px-3.5 py-1.5 text-sm font-medium transition-colors hover:border-navy hover:bg-navy hover:text-cream"
-        >
-          Reply
-        </a>
+        <div className="ml-auto flex flex-none gap-2">
+          <a
+            href={`mailto:${site.replyAddress}?subject=${encodeURIComponent(replySubject)}`}
+            className={headerButton}
+          >
+            Reply
+          </a>
+          {shareHref ? (
+            <Link href={shareHref} className={headerButton}>
+              Share
+            </Link>
+          ) : null}
+        </div>
       </div>
     </header>
   );
@@ -196,6 +209,7 @@ function IssueMessage({ meta }: { meta: IssueMeta }) {
         suffix={`Issue ${meta.number}`}
         dateLine={issueDateLabel(meta.date)}
         replySubject={`Re: ${meta.title}`}
+        shareHref={`/issues/${meta.slug}/share`}
       />
       <Letter meta={meta} />
     </article>

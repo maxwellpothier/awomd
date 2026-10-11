@@ -23,6 +23,15 @@ export interface IssueLetterProps {
   permalink: string;
   /** Replaced per recipient at send time. */
   unsubscribeUrl: string;
+  /** The issue's story images, for "Share on your story". */
+  shareUrl: string;
+  /** Where "Forwarded this?" sends someone who got the issue from a friend. */
+  subscribeUrl: string;
+  /**
+   * A few lines above the banner, for one reader: the welcome note on the
+   * latest issue a new subscriber gets on confirming (`email/welcome.ts`).
+   */
+  note?: ReactNode;
   children: ReactNode;
 }
 
@@ -46,6 +55,9 @@ export function IssueLetter({
   baseUrl,
   permalink,
   unsubscribeUrl,
+  shareUrl,
+  subscribeUrl,
+  note,
   children,
 }: IssueLetterProps) {
   const logo = `${baseUrl.replace(/\/$/, "")}/brand/email-banner.png`;
@@ -60,6 +72,8 @@ export function IssueLetter({
         backgroundColor: color.cream,
       }}
     >
+      {note ? <Section style={{ padding: "26px 24px 22px" }}>{note}</Section> : null}
+
       {/*
         The banner is the image, full bleed — not a logo sitting on a navy
         cell. The navy and its texture are baked in, so there is no seam to
@@ -180,11 +194,33 @@ export function IssueLetter({
             fontFamily: font.serif,
             fontSize: "13px",
             lineHeight: "18px",
+            color: color.cream,
           }}
         >
+          <Link href={shareUrl} style={{ color: color.cream }}>
+            Share on your story
+          </Link>
+          {"  ·  "}
           <Link href={permalink} style={{ color: color.cream }}>
             Read in browser
           </Link>
+        </Text>
+        {/* For whoever this was forwarded to. Its Unsubscribe button above
+            is the forwarder's, which /unsubscribe owns up to. */}
+        <Text
+          style={{
+            margin: "10px 0 0",
+            fontFamily: font.serif,
+            fontSize: "13px",
+            lineHeight: "18px",
+            color: color.cream,
+          }}
+        >
+          Forwarded this? Get it every Sunday at{" "}
+          <Link href={subscribeUrl} style={{ color: color.cream }}>
+            awomd.com
+          </Link>
+          .
         </Text>
       </Section>
     </Container>
@@ -217,5 +253,36 @@ export function IssueEmail({ preview, ...letter }: IssueEmailProps) {
         <IssueLetter {...letter} />
       </Body>
     </Html>
+  );
+}
+
+const noteText = {
+  margin: "0 0 12px",
+  fontFamily: font.serif,
+  fontSize: "17px",
+  lineHeight: "27px",
+  color: color.ink,
+} as const;
+
+/**
+ * Above the banner on the latest issue, when it goes to someone who just
+ * confirmed. The Promotions ask lives here rather than in the confirmation
+ * email, because this is the first issue they can actually drag to Primary.
+ */
+export function WelcomeNote() {
+  return (
+    <>
+      <Text style={noteText}>
+        Thanks for signing up! Here&rsquo;s the latest issue, so you don&rsquo;t
+        have to wait for Sunday.
+      </Text>
+      <Text style={noteText}>
+        One favor: if this landed in Gmail&rsquo;s Promotions tab, drag it to
+        Primary and say yes when Gmail asks about future messages. And if you
+        feel like it, reply with one album you love. Replies help the next issue
+        find your inbox, and I read every one.
+      </Text>
+      <Text style={{ ...noteText, margin: 0 }}>Max</Text>
+    </>
   );
 }

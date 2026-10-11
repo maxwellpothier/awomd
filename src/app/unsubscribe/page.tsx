@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { site } from "@/content/site";
+import { db } from "@/db/supabase";
 
 export const metadata: Metadata = {
   title: "Unsubscribe",
@@ -14,8 +16,11 @@ export const metadata: Metadata = {
  * page: `/api/unsubscribe` takes the reader off by their token and redirects
  * here with the outcome.
  *
- * - `?done=1&token=…`: they're off. Offers the undo, since a mis-tap or a mail
- *   scanner following links can get here without meaning to.
+ * - `?done=1&token=…`: they're off. Says which address, partly hidden, and
+ *   offers the undo, since a mis-tap, a mail scanner following links, or a
+ *   friend pressing the button in a forwarded copy can all get here without
+ *   meaning to. The friend case is the one that hides: the token is the
+ *   original reader's, so it's their address that came off.
  * - `?resubscribed=1`: the undo worked.
  * - `?error=1`: the link was bad or the database was down.
  * - nothing: someone pressed the button in the site's copy of the letter,
@@ -30,10 +35,19 @@ export default async function UnsubscribePage({
   const token = typeof query.token === "string" ? query.token : "";
 
   if (query.done === "1") {
+    const address = token ? await maskedAddress(token) : null;
     return (
       <Page title="You're unsubscribed">
         <p>
-          You won&rsquo;t get any more issues. Thanks for reading while you did.
+          {address ? (
+            <>
+              <strong className="font-semibold [overflow-wrap:anywhere]">{address}</strong> won&rsquo;t
+              get any more issues.
+            </>
+          ) : (
+            <>You won&rsquo;t get any more issues.</>
+          )}{" "}
+          Thanks for reading while you did.
         </p>
         {token ? (
           <form method="post" action={`/api/unsubscribe?token=${encodeURIComponent(token)}`}>
@@ -48,6 +62,20 @@ export default async function UnsubscribePage({
               Keep me on the list
             </button>
           </form>
+        ) : null}
+        {address ? (
+          <p className="text-base leading-7 text-ink-muted">
+            Not your address? Then a friend forwarded you their copy, and its
+            button took them off instead. Put them back with the button above,
+            and{" "}
+            <Link
+              href="/?ref=forward"
+              className="underline decoration-ink/30 underline-offset-[3px] hover:decoration-ink"
+            >
+              sign up yourself
+            </Link>{" "}
+            if you&rsquo;d like your own.
+          </p>
         ) : null}
       </Page>
     );
@@ -84,6 +112,28 @@ export default async function UnsubscribePage({
       )}
     </Page>
   );
+}
+
+/**
+ * The address a token belongs to, with most of the name hidden:
+ * "m•••@gmail.com". Enough for the owner to recognise, not enough to hand a
+ * friend who was forwarded the letter someone's whole address.
+ */
+async function maskedAddress(token: string): Promise<string | null> {
+  if (!/^[0-9a-f]{64}$/.test(token)) return null;
+  try {
+    const { data } = await db()
+      .from("subscribers")
+      .select("email")
+      .eq("unsubscribe_token", token)
+      .maybeSingle();
+    const email: string | undefined = data?.email;
+    const at = email?.lastIndexOf("@") ?? -1;
+    if (!email || at < 1) return null;
+    return `${email[0]}•••${email.slice(at)}`;
+  } catch {
+    return null;
+  }
 }
 
 function Page({ title, children }: { title: string; children: ReactNode }) {
