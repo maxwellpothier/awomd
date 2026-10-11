@@ -31,7 +31,7 @@ export const issues: IssueMeta[] = [
   {
     slug: "2026-10-11",
     number: "003",
-    title: "Practice, Practice, Practice",
+    title: "Hear It in My Mind and Make It Real",
     date: "2026-10-11",
     preview:
       "I Love My Computer came out last year, and I can't stop going back to it. Ninajirachi, Saint Etienne's Foxbase Alpha, and the weekly grab bag.",
