@@ -62,6 +62,12 @@ export interface CardProps {
 export interface TrackProps {
   title: string;
   artist: string;
+  /**
+   * The year the linked recording was made, not when that release came out:
+   * a 1963 live take reissued in 2005 is 1963. Left off a track nested in an
+   * album card, which already shows its year.
+   */
+  year?: number;
   cover?: string;
   pills?: Pills;
   href?: string;
