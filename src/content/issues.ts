@@ -29,6 +29,19 @@ export interface IssueMeta {
 /** Newest first. */
 export const issues: IssueMeta[] = [
   {
+    slug: "2026-10-18",
+    number: "004",
+    title: "A Quiet Night in California",
+    date: "2026-10-18",
+    preview:
+      "I've got a weird parasocial relationship with Cameron Winter. His Carnegie Hall album, Earl Sweatshirt's Live Laugh Love, a grab bag, and a reader's pick from XTC.",
+    covers: [
+      "/covers/xtc-complicated-game.jpg",
+      "/covers/adult-dvd-do-as-i-please.jpg",
+      "/covers/earl-sweatshirt-live-laugh-love.jpg",
+    ],
+  },
+  {
     slug: "2026-10-11",
     number: "003",
     title: "Hear It in My Mind and Make It Real",

@@ -52,7 +52,8 @@ Initial block palette (will grow; the abstraction is what's fixed):
   Can nest Tracks.
 - **Track** — title, artist, cover, pills, listen link, and a short note
   written as children, so it can hold links (2026-09-27, was a `note` string).
-  Standalone or nested under an AlbumCard.
+  Standalone or nested under an AlbumCard. Optional year (2026-10-18) on the
+  artist line: the year the linked recording was made, left off when nested.
 - **Pills** — freeform strings on any card or track ("rage", "acoustic",
   "twangy"). A *property*, not a block; pills never stand on their own.
 

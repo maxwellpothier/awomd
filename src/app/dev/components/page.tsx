@@ -90,6 +90,19 @@ export default function ComponentsGallery() {
           />
         </Specimen>
 
+        <Specimen label="Standalone Track with cover and year">
+          <Track
+            title="An Older Song"
+            artist="Fourth Placeholder"
+            year={1979}
+            cover="/covers/placeholder-02.png"
+            href="https://example.com/track-2"
+            pills={["new wave"]}
+          >
+            <P>The year sits on the artist line, so the card stays compact.</P>
+          </Track>
+        </Specimen>
+
         <Specimen label="Standalone Track, no link, no pills">
           <Track
             title="A Standalone Track"

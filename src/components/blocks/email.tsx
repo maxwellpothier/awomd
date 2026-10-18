@@ -237,7 +237,15 @@ export function createEmailComponents(at: {
     );
   }
 
-  function Track({ title, artist, cover, pills, href, children }: TrackProps) {
+  function Track({
+    title,
+    artist,
+    year,
+    cover,
+    pills,
+    href,
+    children,
+  }: TrackProps) {
     const id = blockId(artist, title);
     return (
       <EmailSection
@@ -289,7 +297,7 @@ export function createEmailComponents(at: {
                 color: color.inkMuted,
               }}
             >
-              {artist}
+              {[artist, year].filter(Boolean).join(" · ")}
             </Text>
             {href ? (
               <Text style={{ margin: "2px 0 0", lineHeight: label.lineHeight }}>
