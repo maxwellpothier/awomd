@@ -29,6 +29,19 @@ export interface IssueMeta {
 /** Newest first. */
 export const issues: IssueMeta[] = [
   {
+    slug: "2026-10-25",
+    number: "005",
+    title: "One Set of Footprints",
+    date: "2026-10-25",
+    preview:
+      "I never thought I'd be head over heels for a Christian rock album. Lift to Experience, Danger Mouse and Black Thought's Cheat Codes, and four tracks.",
+    covers: [
+      "/covers/lift-to-experience-the-texas-jerusalem-crossroads.jpg",
+      "/covers/shes-green-locket.jpg",
+      "/covers/danger-mouse-black-thought-cheat-codes.jpg",
+    ],
+  },
+  {
     slug: "2026-10-18",
     number: "004",
     title: "A Quiet Night in California",
