@@ -23,7 +23,8 @@ First issue: Sunday 2026-09-27, 4pm. Quality over speed; ship when it's right.
 - **The email constraint is the design constraint.** Every block renders as
   email, and the website shows that same render. Nothing gets authored that
   email can't show.
-- **Don't build admin UIs until the file workflow hurts.**
+- **Don't build admin UIs until the file workflow hurts.** Checking the list
+  hurt first: `/admin` exists since 2026-10-25 (Website).
 - **Every platform dependency sits behind a resolver or adapter** so swapping it
   is a file change, not a migration.
 
@@ -304,6 +305,12 @@ new, make sure every way it travels turns into a signup.
 - `/about`
 - `/subscribe/confirm`, `/unsubscribe` — token endpoints, with step 8.
 - `/dev/components` — gallery, dev only.
+- `/admin` — Max's view of the list: the count, who joined and left lately,
+  where they came from, who never confirmed, and how many each issue went to.
+  Added 2026-10-25 so "anyone new?" doesn't need asking. One password,
+  `ADMIN_PASSWORD` (Vercel and `.env.local`), and a cookie holding its keyed
+  hash for a year per device; changing the password signs everyone out.
+  Noindex, and left out of robots.txt so nothing advertises it.
 - `/feed.xml` (RSS), `/sitemap.xml`, `/robots.txt`; every page has a link
   preview image (`opengraph-image.tsx`, the site's and one per issue).
 
@@ -426,4 +433,4 @@ serves the previous compilation. If a change to an issue does not appear, `rm -r
   Office has no Arial Narrow, so headlines fall to plain Arial Bold (Impact or
   Bahnschrift would keep them condensed; see `docs/email-safe-fonts.md`).
 - Analytics dashboard (queries on `events` suffice)
-- Custom domain for the components gallery or any auth
+- Custom domain for the components gallery, or auth beyond `/admin`'s one password
