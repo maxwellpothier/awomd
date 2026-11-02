@@ -6,13 +6,24 @@ build starts from. Revise it when a decision changes; don't let it drift silentl
 ## What it is
 
 A weekly music newsletter. One email, Sundays at 4pm, plus a small website.
-Written by Max, sent to friends and family first, architected to scale to a few
-hundred readers without a rewrite.
+Written by Max, sent to friends and family first.
 
-Goals, in Max's words:
-1. Get more personalized music recommendations back from readers.
-2. Write thoughts out to understand the music more deeply.
-3. Connect with friends and family, and maybe inspire them to do the same.
+**Sub to AWOMD if you want one album a week you'd never have found, from any
+decade, from someone who can't stop playing it.** Not new-release verdicts:
+the lead record is whatever was actually on the desk that week, any year.
+The foundation is human recommendation in place of the algorithm, not Max
+himself, so other voices fit (see Growth, guest takeovers).
+
+Goals, reordered 2026-10-28 (grilling session):
+1. Become the place people go for music recommendations from a person — named
+   the way people name Fantano, Album of the Year and Rate Your Music.
+2. Get more personalized music recommendations back from readers.
+3. Write thoughts out to understand the music more deeply.
+4. Friends and family are the first readers, not the whole audience.
+
+Goal 1 and goal 3 pull apart eventually: weekly guest takeovers would make
+Max an editor rather than the writer. Decide that when takeovers get close to
+weekly, not before.
 
 First issue: Sunday 2026-09-27, 4pm. Quality over speed; ship when it's right.
 
@@ -287,6 +298,47 @@ new, make sure every way it travels turns into a signup.
 - The images can't use the letter's installed fonts, so they draw in Roboto
   Condensed ExtraBold (what Android shows for the headline stack) and Gelasio
   (drawn to Georgia's metrics); see `assets/fonts/`.
+
+## Growth
+
+Decided 2026-10-28. An inbox has no discovery, so growth comes from outside
+it, and from people who already have an audience.
+
+**Stage 1 target: 150 confirmed readers by 2027-02-28**, 50 of them from
+Instagram (`site:ig` in `/admin`). Short of it, change the posts, not the
+newsletter. At 23 confirmed on 2026-10-28.
+
+- **Instagram, @aweekonmydesk**, kept a Creator account (Business accounts
+  lose most of the music library). Bio links `awomd.com/?ref=ig`. Three posts
+  a week, all scheduled in one Sunday sitting:
+  - Sunday: the issue.
+  - Wednesday: a Reel of this issue's lead album, the card on screen with the
+    song added in Instagram.
+  - Friday: a Reel of **last week's** reader favorite, so it is known by
+    Sunday. No vote counts shown while they're small.
+  - Tag the artist on every Reel.
+  The Reel videos are to be made by the build, next to the story images.
+- **Reader favorites come from replies** and from asking readers Max knows.
+  No reaction links, and nothing tracked (see Tracking).
+- **Readers' picks don't appear in the letter.** Replies feed Max's listening;
+  Reader Submission (issue 004) was a one-off.
+- **Ask for forwards in the body**, in Max's voice, once, starting with issue
+  006 (2026-11-01). Forwarded signups land as `site:forward`. Keep it every
+  fourth issue or so if it brings anyone in; drop it if not.
+- **Fan communities.** Each issue's lead record gets one post where its fans
+  already are (its band's subreddit, a genre subreddit, a review on its Rate
+  Your Music page): the write-up itself, ending in `awomd.com/?ref=reddit`.
+  Max's Reddit account has no history, so three weeks of plain commenting
+  first; first post Monday 2026-11-16 from the 2026-11-15 issue.
+- **Guest takeovers**, monthly or whenever someone says yes, weekly ideally:
+  a guest's own week on their own desk, same format, in their words lightly
+  edited (a voice memo is enough). In order: a friend who listens seriously,
+  then artists Max has covered, then bigger names once there are takeovers to
+  show. Max's taste is label-backed indie, whose DMs go unread, so the way in
+  is their publicists: get on label promo lists as a newsletter that writes
+  long about one record, and ask from there.
+- **Later:** newsletter recommendation swaps; paid Instagram ads to the
+  signup page once an issue has proven itself.
 
 ## Website
 
