@@ -29,6 +29,19 @@ export interface IssueMeta {
 /** Newest first. */
 export const issues: IssueMeta[] = [
   {
+    slug: "2026-11-01",
+    number: "006",
+    title: "Bleeding Into the Algorithm",
+    date: "2026-11-01",
+    preview:
+      "Geese are a big reason I'm writing this newsletter. Their From The Basement set, Westside Cowboy's It Goes On, and four tracks.",
+    covers: [
+      "/covers/westside-cowboy-it-goes-on.jpg",
+      "/covers/lucki-out-my-way.jpg",
+      "/covers/lucy-bedroque-i-know-my-influence.jpg",
+    ],
+  },
+  {
     slug: "2026-10-25",
     number: "005",
     title: "One Set of Footprints",

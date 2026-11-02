@@ -73,7 +73,12 @@ There is **one card type, not two**: non-music entries (documentary, book, show)
 are the same shape as an album, so they are the same block with a different
 `kind`. The resolver record already carries `kind`; splitting them again is a
 file change if that ever stops holding.
-- **Divider**, **PullQuote**, **Image**, **PlaylistLink** as needed.
+- **Divider**, **PullQuote**, **Image**, **PlaylistLink** as needed. Image
+  landed 2026-11-01 for issue 006's video: no inbox plays one, so a video is
+  its thumbnail, linked, with the play button baked into the file and a
+  "Watch on YouTube" line under it.
+- **Aside** (2026-11-02) — a smaller, muted, italic line, for asks of the
+  reader like the forward ask in issue 006, so they sit apart from the writing.
 
 Every block type has exactly one renderer, the email one, and the site
 renders it inline. Adding a block type is adding a component to that one file.
