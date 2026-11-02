@@ -34,8 +34,10 @@ export function Signup({
 }) {
   const latest = issues.at(0);
   return (
-    <div className="mx-auto grid max-w-6xl gap-12 px-6 py-8 sm:px-8 sm:py-14 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-center lg:gap-20 lg:py-20">
-      <div className="max-w-xl">
+    <div className="mx-auto grid max-w-6xl gap-12 px-6 py-8 sm:px-8 sm:py-14 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start lg:gap-20 lg:py-20">
+      {/* The pile keeps growing, so this sits at its top, not its middle. The
+          padding drops the headline past the covers, level with the sheet. */}
+      <div className="max-w-xl lg:pt-16">
         {state === "form" ? <Form /> : null}
         {state === "sent" ? <Sent email={email} /> : null}
         {state === "confirmed" ? <Confirmed latest={latest} /> : null}
