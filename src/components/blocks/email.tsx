@@ -14,8 +14,10 @@ import {
   blockId,
   kindLabel,
   listenUrl,
+  type AsideProps,
   type CardProps,
   type DividerProps,
+  type ImageProps,
   type Pills as PillList,
   type PullQuoteProps,
   type SectionProps,
@@ -356,6 +358,61 @@ export function createEmailComponents(at: {
     );
   }
 
+  function Aside({ text }: AsideProps) {
+    return (
+      <Text
+        style={{
+          ...prose,
+          margin: "22px 0 0",
+          fontSize: "15px",
+          lineHeight: "23px",
+          fontStyle: "italic",
+          color: color.inkMuted,
+        }}
+      >
+        {text}
+      </Text>
+    );
+  }
+
+  function Image({ src, alt, width, height, href, linkLabel }: ImageProps) {
+    const picture = (
+      <Img
+        src={absolute(src)}
+        alt={alt}
+        width={String(width)}
+        height={String(height)}
+        style={{
+          display: "block",
+          width: "100%",
+          maxWidth: `${width}px`,
+          height: "auto",
+          border: 0,
+          borderRadius: "2px",
+        }}
+      />
+    );
+    return (
+      <EmailSection style={{ margin: "24px 0" }}>
+        {href ? <Link href={href}>{picture}</Link> : picture}
+        {href && linkLabel ? (
+          <Text style={{ margin: "6px 0 0", lineHeight: label.lineHeight }}>
+            <Link
+              href={href}
+              style={{
+                ...label,
+                color: color.orange,
+                textDecoration: "underline",
+              }}
+            >
+              {linkLabel}
+            </Link>
+          </Text>
+        ) : null}
+      </EmailSection>
+    );
+  }
+
   /**
    * The torn divider is an image (scripts/tear-divider.mts, `npm run
    * divider`): email can't clip to a shape. It runs the letter's full width,
@@ -444,6 +501,8 @@ export function createEmailComponents(at: {
     Media: Card,
     Track,
     PullQuote,
+    Aside,
+    Image,
     Divider,
 
     p: (props) => <Text style={prose} {...props} />,

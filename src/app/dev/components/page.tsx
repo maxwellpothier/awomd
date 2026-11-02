@@ -26,7 +26,7 @@ export default function ComponentsGallery() {
     issue: "gallery",
     baseUrl: "",
   }) as Record<string, Block>;
-  const { Section, Album, Media, Track, PullQuote, Divider } = map;
+  const { Section, Album, Media, Track, PullQuote, Aside, Image, Divider } = map;
   const { p: P, a: A, strong: Strong, ul: Ul, blockquote: Quote } = map;
   const Wrapper = map.wrapper;
 
@@ -116,6 +116,22 @@ export default function ComponentsGallery() {
           <PullQuote
             text="A pull quote, for when a line is worth stopping on."
             cite="Someone worth quoting"
+          />
+        </Specimen>
+
+        <Specimen label="Aside">
+          <P>The end of a part of the letter, at full voice.</P>
+          <Aside text="A quieter line after it, such as an ask of the reader." />
+        </Specimen>
+
+        <Specimen label="Image, linked (a video's thumbnail)">
+          <Image
+            src="/images/geese-from-the-basement.jpg"
+            alt="A video thumbnail"
+            width={552}
+            height={311}
+            href="https://example.com/video"
+            linkLabel="Watch on YouTube"
           />
         </Specimen>
 

@@ -102,6 +102,31 @@ export interface DividerProps {
   tear?: boolean;
 }
 
+/**
+ * A quieter line to the side of the writing, such as an ask of the reader.
+ * Takes `text` for the same reason PullQuote does.
+ */
+export interface AsideProps {
+  text: string;
+}
+
+/**
+ * A wide picture in the letter's column, optionally a link out: how a video
+ * gets into an issue, since no inbox plays one. Anything drawn on it, a play
+ * button included, has to be baked into the file.
+ */
+export interface ImageProps {
+  src: string;
+  /** What the picture shows, for a client with images off. */
+  alt: string;
+  /** Display size at the column's full width of 552. */
+  width: number;
+  height: number;
+  href?: string;
+  /** The small orange line under a linked picture, like a card's Listen. */
+  linkLabel?: string;
+}
+
 /** Where a block sits, so outbound links stay identifiable as ours. */
 export interface BlockLocation {
   /** Issue slug, e.g. "2026-09-20". */
