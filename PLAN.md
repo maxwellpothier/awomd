@@ -316,7 +316,8 @@ newsletter. At 23 confirmed on 2026-10-28.
 - **Instagram, @aweekonmydesk**, kept a Creator account (Business accounts
   lose most of the music library). Bio links `awomd.com/?ref=ig`. Three posts
   a week, all scheduled in one Sunday sitting:
-  - Sunday: the issue.
+  - Sunday: the issue, as a 1080 × 1080 square at `/issues/<slug>/post`
+    (2026-11-02), the story image's sheet drawn smaller.
   - Wednesday: a Reel of this issue's lead album, the card on screen with the
     song added in Instagram.
   - Friday: a Reel of **last week's** reader favorite, so it is known by
