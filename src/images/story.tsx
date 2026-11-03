@@ -74,6 +74,66 @@ export async function storyImage(meta: IssueMeta, record?: IssueRecord) {
   );
 }
 
+/**
+ * The issue as a square for the Instagram feed: the story's issue sheet with
+ * everything drawn smaller to fit, and no safe zones to leave, since nothing
+ * is laid over a feed post.
+ */
+export const postSize = { width: 1080, height: 1080 };
+
+/** How much smaller than in a story the covers and sheet are drawn. */
+const postScale = 0.84;
+
+export async function postImage(meta: IssueMeta) {
+  const [logoSrc, body] = await Promise.all([logo, IssueSheet({ meta })]);
+
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          backgroundColor: color.navy,
+          paddingTop: 36,
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {logoSrc ? <img src={logoSrc} width={205} height={205 * logoAspect} alt="" /> : null}
+        <div
+          style={{
+            display: "flex",
+            width: sheetWidth,
+            marginTop: -12,
+            transform: `scale(${postScale})`,
+            transformOrigin: "top center",
+          }}
+        >
+          {body}
+        </div>
+        <div
+          style={{
+            ...serif,
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 34,
+            display: "flex",
+            justifyContent: "center",
+            fontSize: 32,
+            color: color.cream,
+          }}
+        >
+          Every Sunday at awomd.com
+        </div>
+      </div>
+    ),
+    { ...postSize, fonts: await fonts() },
+  );
+}
+
 /** A sheet of paper with a torn bottom edge, tilted a little. */
 function Sheet({
   seed,
