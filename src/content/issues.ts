@@ -29,6 +29,19 @@ export interface IssueMeta {
 /** Newest first. */
 export const issues: IssueMeta[] = [
   {
+    slug: "2026-11-08",
+    number: "007",
+    title: "Honey Is Not for One Mouth Only",
+    date: "2026-11-08",
+    preview:
+      "This week I wasn't expecting to fall in love with a Malian desert blues album. Ali Farka Touré's Savane, Squarepusher's Ultravisitor, and three tracks.",
+    covers: [
+      "/covers/ali-farka-toure-savane.jpg",
+      "/covers/twisted-teens-stalks.jpg",
+      "/covers/depeche-mode-music-for-the-masses.jpg",
+    ],
+  },
+  {
     slug: "2026-11-01",
     number: "006",
     title: "Bleeding Into the Algorithm",
