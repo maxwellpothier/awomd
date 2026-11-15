@@ -29,6 +29,19 @@ export interface IssueMeta {
 /** Newest first. */
 export const issues: IssueMeta[] = [
   {
+    slug: "2026-11-15",
+    number: "008",
+    title: "Big Swings",
+    date: "2026-11-15",
+    preview:
+      "Pitchfork dropped their 100 best indie rock albums, and now I have to hear them all. Cat Power's Moon Pix, and three tracks.",
+    covers: [
+      "/covers/cat-power-moon-pix.jpg",
+      "/covers/four-tet-live-at-alexandra-palace-2023.jpg",
+      "/covers/fiona-apple-extraordinary-machine.jpg",
+    ],
+  },
+  {
     slug: "2026-11-08",
     number: "007",
     title: "Honey Is Not for One Mouth Only",
